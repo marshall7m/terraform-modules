@@ -7,13 +7,6 @@ locals {
   airflow_instance_tags = var.create_airflow_instance == true && var.airflow_instance_tags != {} ? var.airflow_instance_tags : local.default_airflow_instance_tags
 }
 
-# data "template_file" "airflow_user_data" {
-#   template = "${file("${path.module}/cfg/ec2-init.sh")}"
-#   vars = {
-#     region = var.region
-#   }
-# }
-
 data "aws_ssm_document" "codedeploy_agent" {
   name            = "AWS-ConfigureAWSPackage"
   document_format = "JSON"
@@ -23,8 +16,6 @@ data "aws_ssm_document" "ssm_agent" {
   name            = "AWS-UpdateSSMAgent"
   document_format = "JSON"
 }
-
-
 
 resource "aws_ssm_association" "codedeploy_agent" {
   name          = data.aws_ssm_document.codedeploy_agent.name
@@ -92,6 +83,15 @@ resource "aws_ssm_parameter" "AIRFLOW__CORE__SQL_ALCHEMY_CONN" {
   type  = "SecureString"
   value = aws_db_instance.airflow[count.index].address
   # value = "${var.DB_DRIVER}://${var.aws_db_instance.airflow.username}:${var.aws_db_instance.airflow.password}@${var.aws_db_instance.airflow.address}"
+}
+
+resource "aws_eip" "airflow" {
+  vpc = true
+  instance                  = aws_instance.airflow[0].id
+  associate_with_private_ip = aws_instance.airflow[0].private_ip
+  tags = {
+    "Name" = "${var.resource_prefix}-airflow-ec2-eip"
+  }
 }
 
 resource "aws_instance" "airflow" {
@@ -240,12 +240,12 @@ resource "aws_iam_role_policy" "airflow" {
         "Resource": "*"
     },
     {
-        "Effect": "Allow",
-        "Action": [
-            "s3:GetObject",
-            "s3:PutObject"
-        ],
-        "Resource": "arn:aws:s3:::${var.private_bucket}/data_pipeline/${var.env}/ssm/logs"
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchGetImage"
+      ],
+      "Resource": "*"
     },
     {
       "Effect": "Allow",

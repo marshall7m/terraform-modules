@@ -1,12 +1,13 @@
 #!/bin/bash
-
+sudo su - ec2-user
 #update installed packages and package cache
 sudo yum update -y
 
+##Docker##
+
 #install the most recent Docker Community Edition package
-echo "Installing Docker"
-sudo amazon-linux-extras install docker
-echo "Starting Docker"
+sudo yum install docker -y
+#start docker service
 sudo service docker start
 #allows user to start docker without sudo
 sudo usermod -a -G docker ec2-user
