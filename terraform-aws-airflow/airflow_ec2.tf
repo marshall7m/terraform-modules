@@ -268,6 +268,27 @@ resource "aws_iam_role_policy" "airflow" {
 POLICY
 }
 
+resource "aws_iam_role_policy" "airflow_ec2_ssm_bucket_logs" {
+  count = var.create_airflow_instance && var.airflow_instance_ssm_access ? 1 : 0
+  role = aws_iam_role.airflow[count.index].name
+  name = "${var.resource_prefix}-airflow-ec2-s3-policy"
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+        "Effect": "Allow",
+        "Action": [
+            "s3:GetObject",
+            "s3:PutObject"
+        ],
+        "Resource": "arn:aws:s3:::${var.private_bucket}/*"
+    }
+  ]
+}
+POLICY
+}
+
 resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore" {
   count = var.create_airflow_instance && var.airflow_instance_ssm_access ? 1 : 0
   role       = aws_iam_role.airflow[count.index].name
