@@ -235,7 +235,7 @@ resource "aws_iam_role_policy" "airflow" {
       "Effect": "Allow",
       "Action": [
         "ecr:GetAuthorizationToken",
-        "ecr:BatchGetImage"
+        "ecr:BatchGetImage",
         "ecr:GetDownloadUrlForLayer"
       ],
       "Resource": "*"
@@ -253,7 +253,6 @@ resource "aws_iam_role_policy" "airflow" {
           "arn:aws:s3:::aws-ssm-distributor-file-${var.region}/*",
           "arn:aws:s3:::aws-ssm-document-attachments-${var.region}/*",
           "arn:aws:s3:::patch-baseline-snapshot-${var.region}/*"
-
       ]
     }
   ]
