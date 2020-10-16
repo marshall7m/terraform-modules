@@ -10,8 +10,8 @@ resource "aws_db_instance" "airflow" {
   count = var.create_airflow_db == true && var.airflow_db_name != null && var.airflow_db_username != null && var.airflow_db_password != null && var.airflow_db_instance_class != null ? 1 : 0
   identifier                = "${var.resource_prefix}-meta-db"
   allocated_storage         = var.airflow_db_allocated_storage
-  engine                    = "postgres"
-  engine_version            = "9.6.6"
+  engine                    = var.airflow_db_engine
+  engine_version            = var.airflow_db_engine_version
   instance_class            = var.airflow_db_instance_class
   name                      = var.airflow_db_name
   username                  = var.airflow_db_username

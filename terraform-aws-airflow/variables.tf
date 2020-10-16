@@ -136,9 +136,18 @@ variable "create_airflow_db_sg" {
   default = false
 }
 
+variable "airflow_db_engine" {
+  description = "The database type to be used for the airflow  (e.g. `postgres`, `mysql`)"
+  default = "postgres"
+}
+
+variable "airflow_db_engine_version" {
+  description = "The database version to be used for the airflow database"
+}
+
 variable "airflow_db_allocated_storage" {
   description = "The allocated storage for the db in gibibytes"
-  default = 5
+  default = 20
 }
 
 variable "airflow_db_name" {
