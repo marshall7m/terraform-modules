@@ -88,7 +88,7 @@ resource "aws_eip" "airflow" {
 
 resource "aws_instance" "airflow" {
   count = var.create_airflow_instance == true && var.airflow_instance_ami != null && var.airflow_instance_type != null && length(var.private_subnets_ids) > 0 ? 1 : 0
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   iam_instance_profile = aws_iam_instance_profile.airflow[count.index].name
   ami                         = var.airflow_instance_ami
   instance_type               = var.airflow_instance_type
