@@ -11,6 +11,12 @@ variable "region" {
   description = "The default region used if specific region variables are not defined"
 }
 
+variable "private_bucket" {
+  description = "S3 bucket used to store ssm logs"
+}
+
+####VPC####
+
 variable "vpc_id" {
   description = "VPC ID of a pre-existing VPC"
   default = null
@@ -19,10 +25,6 @@ variable "vpc_id" {
 variable "vpc_s3_endpoint_pl_id" {
   description = "VPC S3 endpoint prefix ID. Must be the same VPC specified under `vpc_id`"
   default = null
-}
-
-variable "private_bucket" {
-  description = "S3 bucket used to store ssm logs"
 }
 
 variable "private_subnets_cidr_blocks" {
@@ -35,7 +37,7 @@ variable "private_subnets_ids" {
   default = []
 }
 
-####CREATE AIRFLOW DEFAULT RESOURCES####
+####AIRFLOW INSTANCE####
 
 variable "create_airflow_instance" {
   description = "Determines if module should launch an EC2 instance to host Airflow on"
@@ -54,20 +56,6 @@ variable "airflow_instance_ssm_access" {
   type = bool
   default = false
 }
-
-variable "create_airflow_db" {
-  description = "Determines if module should launch an RDS instance to host Airflow meta-db on"
-  type = bool
-  default = false
-}
-
-variable "create_airflow_db_sg" {
-  description = "Determines if module should create a security group for the Airflow RDS instance"
-  type = bool
-  default = false
-}
-
-####AIRFLOW DEFAULT RESOURCES PARAMETERS####
 
 variable "airflow_instance_ami" {
   description = "Airflow EC2 instance AMI (e.g. \"ami-0841edc20334f9287\")"
@@ -100,6 +88,54 @@ variable "airflow_db_instance_class" {
   default = null
 }
 
+variable "airflow_instance_tags" {
+  description = "Dictionary of tags used for Airflow instance"
+  default = {}
+}
+
+variable "airflow_instance_user_data" {
+  description = "Script to run at launch for the Airflow instance"
+  default = null
+}
+
+variable "airflow_instance_region" {
+  default = null
+  description = "The region used to define the SSM S3 ARN for the Airflow instance policy"
+}
+
+###AIRFLOW INSTANCE SSM####
+
+variable "ssm_codedeploy_agent_output_key" {
+  default = "ssm/state_manager_logs/codedeploy_agent/"
+}
+
+variable "ssm_agent_output_key" {
+  default = "ssm/state_manager_logs/ssm_agent/"
+}
+
+variable "ssm_install_dependencies_output_key" {
+  default = "ssm/state_manager_logs/install_dependencies/"
+}
+
+variable "ecr_repo_url" {
+  description = "ECR repo to authenticate docker with"
+  default = null
+}
+
+####AIRFLOW DB PARAMETERS####
+
+variable "create_airflow_db" {
+  description = "Determines if module should launch an RDS instance to host Airflow meta-db on"
+  type = bool
+  default = false
+}
+
+variable "create_airflow_db_sg" {
+  description = "Determines if module should create a security group for the Airflow RDS instance"
+  type = bool
+  default = false
+}
+
 variable "airflow_db_allocated_storage" {
   description = "The allocated storage for the db in gibibytes"
   default = 5
@@ -120,34 +156,3 @@ variable "airflow_db_password" {
   default = null
 }
 
-variable "airflow_instance_tags" {
-  description = "Dictionary of tags used for Airflow instance"
-  default = {}
-}
-
-variable "airflow_instance_user_data" {
-  description = "Script to run at launch for the Airflow instance"
-  default = null
-}
-
-variable "airflow_instance_region" {
-  default = null
-  description = "The region used to define the SSM S3 ARN for the Airflow instance policy"
-}
-
-variable "ssm_codedeploy_agent_output_key" {
-  default = "ssm/state_manager_logs/codedeploy_agent/"
-}
-
-variable "ssm_agent_output_key" {
-  default = "ssm/state_manager_logs/ssm_agent/"
-}
-
-variable "ssm_install_dependencies_output_key" {
-  default = "ssm/state_manager_logs/install_dependencies/"
-}
-
-variable "ecr_repo_url" {
-  description = "ECR repo to authenticate docker with"
-  default = null
-}

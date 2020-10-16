@@ -77,14 +77,6 @@ resource "aws_ssm_association" "dependencies" {
   }
 }
 
-resource "aws_ssm_parameter" "AIRFLOW__CORE__SQL_ALCHEMY_CONN" {
-  count = var.create_airflow_db == true && var.airflow_db_name != null && var.airflow_db_username != null && var.airflow_db_password != null && var.airflow_db_instance_class != null ? 1 : 0
-  name  = "${var.resource_prefix}_AIRFLOW__CORE__SQL_ALCHEMY_CONN"
-  type  = "SecureString"
-  value = aws_db_instance.airflow[count.index].address
-  # value = "${var.DB_DRIVER}://${var.aws_db_instance.airflow.username}:${var.aws_db_instance.airflow.password}@${var.aws_db_instance.airflow.address}"
-}
-
 resource "aws_eip" "airflow" {
   vpc = true
   instance                  = aws_instance.airflow[0].id
@@ -244,6 +236,7 @@ resource "aws_iam_role_policy" "airflow" {
       "Action": [
         "ecr:GetAuthorizationToken",
         "ecr:BatchGetImage"
+        "ecr:GetDownloadUrlForLayer"
       ],
       "Resource": "*"
     },
