@@ -12,5 +12,6 @@ output "airflow_db_id" {
 
 output "airflow_db_conn_name" {
     description = "Airflow meta-db connection string KEY name (not sensitive) in SSM parameter store."
-    value = aws_ssm_parameter.AIRFLOW__CORE__SQL_ALCHEMY_CONN.name
+    value = "${aws_ssm_parameter.AIRFLOW__CORE__SQL_ALCHEMY_CONN[0].name}"
+    depends_on = [aws_ssm_parameter.AIRFLOW__CORE__SQL_ALCHEMY_CONN]
 }
