@@ -122,6 +122,14 @@ variable "ecr_repo_url" {
   default = null
 }
 
+variable "kms_key_alias" {
+  description = """
+  KMS key alias used to encrypt/decrypt Airflow meta-db connection string store within SSM parameter store.
+  Defaults to AWS managed ssm key. 
+  """
+  default = "alias/aws/ssm"
+}
+
 ####AIRFLOW DB PARAMETERS####
 
 variable "create_airflow_db" {
@@ -165,3 +173,6 @@ variable "airflow_db_password" {
   default = null
 }
 
+variable "airflow_db_tags" {
+  description = "Tags to associate with Airflow RDS meta-db"
+}

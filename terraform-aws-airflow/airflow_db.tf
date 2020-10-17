@@ -31,5 +31,7 @@ resource "aws_ssm_parameter" "AIRFLOW__CORE__SQL_ALCHEMY_CONN" {
   count = var.create_airflow_db == true && var.airflow_db_name != null && var.airflow_db_username != null && var.airflow_db_password != null && var.airflow_db_instance_class != null ? 1 : 0
   name  = "${var.resource_prefix}-AIRFLOW__CORE__SQL_ALCHEMY_CONN"
   type  = "SecureString"
+  key_id    = var.kms_key_alias
   value = "${aws_db_instance.airflow[count.index].engine}://${aws_db_instance.airflow[count.index].username}:${aws_db_instance.airflow[count.index].password}@${aws_db_instance.airflow[count.index].endpoint}"
+  tags = var.airflow_db_tags 
 }
