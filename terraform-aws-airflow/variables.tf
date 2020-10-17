@@ -123,10 +123,10 @@ variable "ecr_repo_url" {
 }
 
 variable "kms_key_alias" {
-  description = """
+  description = <<-EOF
   KMS key alias used to encrypt/decrypt Airflow meta-db connection string store within SSM parameter store.
   Defaults to AWS managed ssm key. 
-  """
+  EOF
   default = "alias/aws/ssm"
 }
 
