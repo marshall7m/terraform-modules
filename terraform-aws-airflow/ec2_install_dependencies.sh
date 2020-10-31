@@ -14,9 +14,8 @@ sudo service docker start
 #allows user to start docker without sudo
 sudo usermod -a -G docker ec2-user
 
-#authenticate docker with ECR repo
-echo "Authenticating Docker with ECR repo"
-aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${ecr_repo_url}
-
+#install ecr credential helper to automate docker authentication with ECR
 sudo amazon-linux-extras enable docker
-sudo yum install amazon-ecr-credential-helper
+sudo yum install amazon-ecr-credential-helper -y
+sudo mkdir ~/.docker
+sudo printf "{\n\t"credsStore": "ecr-login"\n}" >> ~/.docker/config.json
