@@ -11,7 +11,7 @@ locals {
 }
 
 resource "aws_iam_role_policy_attachment" "custom_dag_read_access" {
-  for_each = var.create_dag_read_access_roles  && var.dag_read_access_roles_policy_arns != [] ? map(flatten(setproduct(aws_iam_role.dag_read_access_roles[*], var.dag_read_access_roles_policy_arns))) : {}
+  for_each = var.create_dag_read_access_roles  && var.dag_read_access_roles_policy_arns != [] ? map(flatten(setproduct(aws_iam_role.dag_read_access[*], var.dag_read_access_roles_policy_arns))) : {}
   
   role       = each.key
   policy_arn = each.value
@@ -24,14 +24,14 @@ data "aws_iam_policy_document" "dag_read_access" {
   statement {
     effect = "Allow"
     resources = ["*"]
-    actions = var.dag_read_access_roles_actions != [] ? var.dag_read_access_roles_actions : local.default_read_access_actions
+    actions = local.default_read_access_actions
     
     dynamic "condition" {
       for_each = each.value
       content {
         test = "StringEquals"
         variable = "aws:ResourceTag/${condition.key}"
-        values = ["$${aws:PrincipalTag/${condition.value}}"]
+        values = ["&{aws:PrincipalTag/${condition.value}}"]
       }
     }
   }
