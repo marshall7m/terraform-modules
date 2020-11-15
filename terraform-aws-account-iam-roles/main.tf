@@ -1,5 +1,5 @@
 module "iam_roles" {
-    for_each = var.roles
+    for_each = {for role in var.roles: role.role_name => role}
     source = "github.com/terraform-aws-modules/terraform-aws-iam/modules/iam-assumable-role"
 
     create_role = each.value.create_role
