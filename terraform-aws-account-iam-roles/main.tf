@@ -1,38 +1,75 @@
-module "iam_roles" {
-    for_each = {for role in var.roles: role.role_name => role}
-    source = "github.com/terraform-aws-modules/terraform-aws-iam/modules/iam-assumable-role"
+resource "aws_iam_role" "admin_role" {
+  count                = length(var.admin_role_cross_account_arns) > 0 ? 1 : 0
+  name                 = var.admin_role_name
+  path                 = var.admin_role_path
+  max_session_duration = var.admin_role_max_session_duration
+  description          = var.admin_role_description
 
-    create_role = each.value.create_role
-    role_name = each.value.role_name
+  force_detach_policies = var.admin_role_force_detach_policies
+  permissions_boundary  = var.admin_role_permissions_boundary
 
-    role_requires_mfa = each.value.role_requires_mfa
-    mfa_age = each.value.mfa_age
+  assume_role_policy = var.admin_role_requires_mfa ? data.aws_iam_policy_document.assume_admin_role_with_mfa[0].json : data.aws_iam_policy_document.assume_admin_role[0].json
 
-    max_session_duration = each.value.max_session_duration
-
-    create_instance_profile = each.value.create_instance_profile
-
-    role_path = each.value.role_path
-    role_permissions_boundary_arn = each.value.role_permissions_boundary_arn
-    force_detach_policies = each.value.force_detach_policies
-    role_description = each.value.role_description
-    tags = each.value.tags
-
-    custom_role_policy_arns = each.value.custom_role_policy_arns
-    number_of_custom_role_policy_arns = each.value.number_of_custom_role_policy_arns
-
-    admin_role_policy_arn = each.value.admin_role_policy_arn
-    attach_admin_policy = each.value.attach_admin_policy
-
-    poweruser_role_policy_arn = each.value.poweruser_role_policy_arn
-    attach_poweruser_policy = each.value.attach_poweruser_policy
-
-    readonly_role_policy_arn = each.value.readonly_role_policy_arn
-    attach_readonly_policy = each.value.attach_readonly_policy
-    
-    role_sts_externalid = each.value.role_sts_externalid
-
-    trusted_role_arns = each.value.trusted_role_arns
-    trusted_role_services = each.value.trusted_role_services
-    trusted_role_actions = each.value.trusted_role_actions
+  tags = var.admin_role_tags
 }
+
+resource "aws_iam_role" "dev_role" {
+  count                = length(var.dev_role_cross_account_arns) > 0 ? 1 : 0
+  name                 = var.dev_role_name
+  path                 = var.dev_role_path
+  max_session_duration = var.dev_role_max_session_duration
+  description          = var.dev_role_description
+
+  force_detach_policies = var.dev_role_force_detach_policies
+  permissions_boundary  = var.dev_role_permissions_boundary
+
+  assume_role_policy = var.dev_role_requires_mfa ? data.aws_iam_policy_document.assume_dev_role_with_mfa[0].json : data.aws_iam_policy_document.assume_dev_role[0].json
+
+  tags = var.dev_role_tags
+}
+
+resource "aws_iam_role" "read_role" {
+  count                = length(var.read_role_cross_account_arns) > 0 ? 1 : 0
+  name                 = var.read_role_name
+  path                 = var.read_role_path
+  max_session_duration = var.read_role_max_session_duration
+  description          = var.read_role_description
+
+  force_detach_policies = var.read_role_force_detach_policies
+  permissions_boundary  = var.read_role_permissions_boundary
+
+  assume_role_policy = var.read_role_requires_mfa ? data.aws_iam_policy_document.assume_read_role_with_mfa[0].json : data.aws_iam_policy_document.assume_read_role[0].json
+
+  tags = var.read_role_tags
+}
+
+resource "aws_iam_role" "tf_plan_role" {
+  count                = length(var.tf_plan_role_cross_account_arns) > 0 ? 1 : 0
+  name                 = var.tf_plan_role_name
+  path                 = var.tf_plan_role_path
+  max_session_duration = var.tf_plan_role_max_session_duration
+  description          = var.tf_plan_role_description
+
+  force_detach_policies = var.tf_plan_role_force_detach_policies
+  permissions_boundary  = var.tf_plan_role_permissions_boundary
+
+  assume_role_policy = data.aws_iam_policy_document.assume_tf_plan_role[0].json
+
+  tags = var.tf_plan_role_tags
+}
+
+resource "aws_iam_role" "tf_apply_role" {
+  count                = length(var.tf_apply_role_cross_account_arns) > 0 ? 1 : 0
+  name                 = var.tf_apply_role_name
+  path                 = var.tf_apply_role_path
+  max_session_duration = var.tf_apply_role_max_session_duration
+  description          = var.tf_apply_role_description
+
+  force_detach_policies = var.tf_apply_role_force_detach_policies
+  permissions_boundary  = var.tf_apply_role_permissions_boundary
+
+  assume_role_policy = data.aws_iam_policy_document.assume_tf_apply_role[0].json
+
+  tags = var.tf_apply_role_tags
+}
+
