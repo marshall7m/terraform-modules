@@ -8,7 +8,7 @@ data "aws_iam_policy_document" "assume_admin_role_with_mfa" {
 
     principals {
       type        = "AWS"
-      identifiers = var.admin_role_cross_account_arns
+      identifiers = toset(var.admin_role_cross_account_arns)
     }
     condition {
       test     = "Bool"
