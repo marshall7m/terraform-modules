@@ -1,6 +1,7 @@
 #### ADMIN - ROLE ####
 variable "admin_role_cross_account_arns" {
-  default = []
+  type = list(string)
+  default = null
 }
 
 variable "admin_role_name" {
@@ -105,7 +106,8 @@ variable "custom_admin_role_policy_arns" {
 
 #### DEV - ROLE ####
 variable "dev_role_cross_account_arns" {
-  default = []
+  type = list(string)
+  default = null
 }
 
 variable "dev_role_name" {
@@ -210,7 +212,8 @@ variable "custom_dev_role_policy_arns" {
 
 #### READ - ROLE ####
 variable "read_role_cross_account_arns" {
-  default = []
+  type = list(string)
+  default = null
 }
 
 variable "read_role_name" {
@@ -316,7 +319,8 @@ variable "custom_read_role_policy_arns" {
 
 #### TF_PLAN - ROLE ####
 variable "tf_plan_role_cross_account_arns" {
-  default = []
+  type = list(string)
+  default = null
 }
 
 variable "tf_plan_role_name" {
@@ -411,7 +415,8 @@ variable "custom_tf_plan_role_policy_arns" {
 
 #### tf_apply - ROLE ####
 variable "tf_apply_role_cross_account_arns" {
-  default = []
+  type = list(string)
+  default = null
 }
 
 variable "tf_apply_role_name" {
