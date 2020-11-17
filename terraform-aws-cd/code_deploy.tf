@@ -1,41 +1,40 @@
 
 resource "aws_codedeploy_app" "this" {
-  count = var.create_cd_app ? 1 : 0
+  count            = var.create_cd_app ? 1 : 0
   compute_platform = var.cd_app_compute_platform
   name             = var.cd_app_name
 }
 
-resource "aws_codedeploy_deployment_config" "this" {
-  count = var.create_cd_config ? 1 : 0
+resource "aws_codedeploy_deployment_config" "min_healthy_hosts" {
+  count                  = var.create_cd_config && var.cd_config_minimum_healthy_hosts != null ? 1 : 0
   deployment_config_name = var.cd_config_name
 
-  dynamic "minimum_healthy_hosts" {
-    for_each = var.cd_config_minimum_healthy_hosts
-    content {
-      type = minimum_healthy_hosts.value.type
-      value = minimum_healthy_hosts.value.value
-    }
+  minimum_healthy_hosts {
+    type  = var.cd_config_minimum_healthy_hosts.type
+    value = var.cd_config_minimum_healthy_hosts.value
   }
+}
 
-  dynamic "traffic_routing_config" {
-    for_each = var.cd_config_traffic_routing_config
-    content {
-      type = traffic_routing_config.value.type
-      
-      dynamic "time_based_canary" {
-        for_each = traffic_routing_config.value.time_based_canary
-        content {
-          interval = time_based_canary.value.interval
-          percentage = time_based_canary.value.percentage
-        }
+resource "aws_codedeploy_deployment_config" "traffic_routing" {
+  count                  = var.create_cd_config && var.cd_config_traffic_routing_config != null ? 1 : 0
+  deployment_config_name = var.cd_config_name
+
+  traffic_routing_config {
+    type = var.cd_config_traffic_routing_config.type
+
+    dynamic "time_based_canary" {
+      for_each = lookup(var.cd_config_traffic_routing_config, "time_based_canary", {})
+      content {
+        interval   = time_based_canary.value.interval
+        percentage = time_based_canary.value.percentage
       }
+    }
 
-      dynamic "time_based_linear" {
-        for_each = traffic_routing_config.value.time_based_linear
-        content {
-          interval = time_based_linear.value.interval
-          percentage = time_based_linear.value.percentage
-        }
+    dynamic "time_based_linear" {
+      for_each = lookup(var.cd_config_traffic_routing_config, "time_based_linear", {})
+      content {
+        interval   = time_based_linear.value.interval
+        percentage = time_based_linear.value.percentage
       }
     }
   }
@@ -45,14 +44,14 @@ resource "aws_codedeploy_deployment_config" "this" {
 resource "aws_codedeploy_deployment_group" "this" {
   app_name               = var.cd_app_name
   deployment_group_name  = var.cd_group_name
-  service_role_arn       = var.cd_group_role_arn
+  service_role_arn       = var.cd_role_arn == null ? aws_iam_role.cd_role[0].arn : var.cd_role_arn
   deployment_config_name = var.cd_config_name
-  
+
   dynamic "deployment_style" {
     for_each = [var.cd_group_deployment_style]
     content {
       deployment_option = deployment_style.value["deployment_option"]
-      deployment_type = deployment_style.value["deployment_type"]
+      deployment_type   = deployment_style.value["deployment_type"]
     }
   }
 
@@ -72,7 +71,7 @@ resource "aws_codedeploy_deployment_group" "this" {
           name = target_group_info.value.name
         }
       }
-      
+
       dynamic "target_group_pair_info" {
         for_each = load_balancer_info.value.target_group_pair_info
         content {
@@ -99,7 +98,7 @@ resource "aws_codedeploy_deployment_group" "this" {
     }
   }
 
-    
+
 
   dynamic "blue_green_deployment_config" {
     for_each = var.cd_group_blue_green_deployment_config
@@ -107,7 +106,7 @@ resource "aws_codedeploy_deployment_group" "this" {
       dynamic "deployment_ready_option" {
         for_each = blue_green_deployment_config.value.deployment_ready_option
         content {
-          action_on_timeout = deployment_ready_option.value.action_on_timeout
+          action_on_timeout    = deployment_ready_option.value.action_on_timeout
           wait_time_in_minutes = deployment_ready_option.value.wait_time_in_minutes
         }
       }
@@ -122,10 +121,10 @@ resource "aws_codedeploy_deployment_group" "this" {
       dynamic "terminate_blue_instances_on_deployment_success" {
         for_each = blue_green_deployment_config.value.terminate_blue_instances_on_deployment_success
         content {
-          action = terminate_blue_instances_on_deployment_success.value.action
-          termination_wait_time_in_minutes  = terminate_blue_instances_on_deployment_success.value.termination_wait_time_in_minutes
+          action                           = terminate_blue_instances_on_deployment_success.value.action
+          termination_wait_time_in_minutes = terminate_blue_instances_on_deployment_success.value.termination_wait_time_in_minutes
         }
-      } 
+      }
     }
   }
 
@@ -148,7 +147,7 @@ resource "aws_codedeploy_deployment_group" "this" {
   }
 
   dynamic "ec2_tag_filter" {
-    for_each = var.cd_group_ec2_tag_filters 
+    for_each = var.cd_group_ec2_tag_filters
     content {
       key = ec2_tag_filter.value.key
       type = coalesce(
@@ -164,7 +163,7 @@ resource "aws_codedeploy_deployment_group" "this" {
     for_each = [var.cd_group_auto_rollback_configuration]
     content {
       enabled = auto_rollback_configuration.value.enabled
-      events = auto_rollback_configuration.value.events
+      events  = auto_rollback_configuration.value.events
     }
   }
 }
