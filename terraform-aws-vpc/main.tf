@@ -78,5 +78,5 @@ module "vpc" {
   
   vpc_endpoint_tags =  var.vpc_endpoint_tags
 
-  tags = var.tags
+  tags = merge(var.tags, var.common_tags)
 }
