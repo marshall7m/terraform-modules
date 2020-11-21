@@ -16,7 +16,7 @@ output "private_subnets_arns" {
 }
 
 output "database_subnets_ids" {
-    value = module.vpc.database_subnets
+    value = module.vpc.outputs.database_subnets
 }
 
 output "database_subnets_cidr_blocks" {
