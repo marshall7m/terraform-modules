@@ -15,6 +15,18 @@ output "private_subnets_arns" {
     value = module.vpc.private_subnet_arns
 }
 
+output "database_subnets_ids" {
+    value = module.vpc.database_subnets
+}
+
+output "database_subnets_cidr_blocks" {
+    value = module.vpc.database_subnets_cidr_blocks
+}
+
+output "database_subnets_arns" {
+    value = module.vpc.database_subnet_arns
+}
+
 output "vpc_s3_endpoint_pl_id" {
     value = module.vpc.vpc_endpoint_s3_pl_id
 }
