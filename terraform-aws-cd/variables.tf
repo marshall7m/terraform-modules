@@ -67,7 +67,10 @@ variable "cd_group_deployment_style" {
     deployment_type   = string
     deployment_option = string
   })
-  default = {}
+  default = {
+    deployment_option = "WITHOUT_TRAFFIC_CONTROL"
+    deployment_type = "IN_PLACE"
+  }
 }
 
 variable "cd_group_load_balancer_info" {
@@ -96,10 +99,7 @@ variable "cd_group_ec2_tag_filters" {
 
 variable "cd_group_auto_rollback_configuration" {
   description = "Rollback configurations for deployment"
-  type = object({
-    enabled = string
-    events  = list(string)
-  })
+  type = any
   default = {}
 }
 
