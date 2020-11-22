@@ -6,33 +6,6 @@ variable "global_tags" {
   default = {}
 }
 
-#### ECR ####
-
-variable "create_ecr_repo" {
-  type    = bool
-  default = false
-}
-
-variable "ecr_base_domain" {
-  default = ""
-}
-
-variable "ecr_tags" {
-  default = {}
-}
-
-variable "ecr_repo_url_to_ssm" {
-  default = false
-}
-
-variable "ssm_ecr_repo_url_name" {
-  default = ""
-}
-
-variable "ssm_ecr_repo_url_tags" {
-  default = {}
-}
-
 #### CODE-DEPLOY-APP ####
 
 variable "create_cd_app" {
@@ -95,6 +68,7 @@ variable "cd_group_ec2_tag_set" {
 }
 
 variable "cd_group_ec2_tag_filters" {
+  type = list(map(string))
   default = {}
 }
 
