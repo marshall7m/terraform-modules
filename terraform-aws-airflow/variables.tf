@@ -5,14 +5,8 @@ variable "resource_prefix" {
 }
 
 variable "resource_suffix" {
-  
+  description = "Suffix to use for all resource names"
   default = ""
-}
-
-variable "common_tags" {
-  description = "Tags to use for all resources"
-  type = map(string)
-  default = {}
 }
 
 variable "region" {
