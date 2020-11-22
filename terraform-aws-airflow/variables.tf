@@ -1,120 +1,150 @@
-variable "env" {
-  description = "Environment name to associate aws resources with"
-}
-
 variable "resource_prefix" {
-  description = "string prefix to add to all aws resources"
+  description = "Prefix to use for all resource names"
+  type = string
   default = ""
 }
 
+variable "resource_suffix" {
+  
+  default = ""
+}
+
+variable "common_tags" {
+  description = "Tags to use for all resources"
+  type = map(string)
+  default = {}
+}
+
 variable "region" {
-  description = "The default region used if specific region variables are not defined"
+  description = "AWS region used for Airflow EC2 and DB"
+  type = string
 }
 
-variable "private_bucket" {
-  description = "S3 bucket used to store ssm logs"
-}
-
-####VPC####
+#### VPC ####
 
 variable "vpc_id" {
   description = "VPC ID of a pre-existing VPC"
+  type = string
   default = null
 }
 
 variable "vpc_s3_endpoint_pl_id" {
   description = "VPC S3 endpoint prefix ID. Must be the same VPC specified under `vpc_id`"
+  type = string
+  default = null
+}
+
+
+variable "private_subnet_ids" {
+  description = "List of VPC subnets IDs used to host Airflow DB"
+  type = list(string)
   default = null
 }
 
 variable "private_subnets_cidr_blocks" {
-  description = "Private subnets CIDR list. Must be specified if Airflow instances will be created"
-  default = []
+  description = "List of VPC IPv4 CIDR blocks used to host Airflow DB"
+  type = list(string)
+  default = null
 }
 
-variable "private_subnets_ids" {
-  description = "Public subnets CIDR list. Used to host public resources under the specified VPC ID"
-  default = []
-}
+#### AIRFLOW-EC2 ####
 
-####AIRFLOW INSTANCE####
-
-variable "create_airflow_instance" {
+variable "create_airflow_ec2" {
   description = "Determines if module should launch an EC2 instance to host Airflow on"
   type = bool
   default = false
 }
 
-variable "create_airflow_instance_sg" {
+variable "create_airflow_ec2_sg" {
   description = "Determines if module should create a security group for the Airflow instance"
   type = bool
   default = false
 }
 
-variable "airflow_instance_ssm_access" {
-  description = "Determines if Airflow EC2 instance can be accessed via SSM Session Manager"
-  type = bool
+variable "create_ec2_eip" {
   default = false
 }
 
-variable "airflow_instance_ami" {
+variable "airflow_db_storage_type" {
+  description = "Airflow DB storage type"
+  type = string
+  default = "gp2"
+}
+
+variable "airflow_ec2_ami" {
   description = "Airflow EC2 instance AMI (e.g. \"ami-0841edc20334f9287\")"
   type = string
   default = null
 }
 
-variable "airflow_instance_type" {
+variable "airflow_ec2_type" {
   description = "Airflow EC2 instance type (e.g. \"t2.micro\")"
+  type = string
   default = null
 }
 
-variable "airflow_instance_ssh_cidr_blocks" {
+variable "airflow_ec2_ssh_cidr_blocks" {
   description = "IPv4 CIDR list of user IPs who can SSH into the airflow instance. `airflow_instance_key_name` must also be defined."
-  default = []
+  type = list(string)
+  default = null
 }
 
-variable "airflow_instance_subnet_id" {
+variable "airflow_ec2_subnet_id" {
   description = "The subnet that will host the airflow instance"
+  type = string
   default = null
 }
 
-variable "airflow_instance_key_name" {
+variable "airflow_ec2_key_name" {
   description = "The key pair name used to SSH into the Airflow instance"
+  type = string
   default = null
 }
 
-variable "airflow_db_instance_class" {
-  description = "The type of to launch (e.g. \"db.t2.micro\")"
-  default = null
-}
-
-variable "airflow_instance_tags" {
-  description = "Dictionary of tags used for Airflow instance"
+variable "airflow_ec2_tags" {
+  description = "Dictionary of tags used for the Airflow instance"
+  type = map(string)
   default = {}
 }
 
-variable "airflow_instance_user_data" {
+variable "airflow_ec2_user_data" {
   description = "Script to run at launch for the Airflow instance"
+  type = string
   default = null
 }
 
-variable "airflow_instance_region" {
+#### AIRFLOW-EC2-SSM ####
+
+variable "ssm_logs_bucket_name" {
+  description = "S3 bucket used to store ssm logs"
   default = null
-  description = "The region used to define the SSM S3 ARN for the Airflow instance policy"
 }
 
-###AIRFLOW INSTANCE SSM####
+variable "install_code_deploy_agent" {
+  description = "Determines if an CodeDeploy agent should be installed on the Airflow EC2"
+  type = bool
+  default = false
+}
 
-variable "ssm_codedeploy_agent_output_key" {
+variable "code_deploy_agent_output_key" {
+  description = "S3 output key for CodeDeploy agent installation logs"
+  type = string
   default = "ssm/state_manager_logs/codedeploy_agent/"
 }
 
+variable "airflow_ec2_has_ssm_access" {
+  description = "Determines if an SSM agent should be installed on the Airflow EC2. If yes, the EC2 instance can be accessed via SSM Session Manager."
+  type = bool
+  default = false
+}
+
 variable "ssm_agent_output_key" {
+  description = "S3 output key for SSM agent installation logs"
   default = "ssm/state_manager_logs/ssm_agent/"
 }
 
 variable "ssm_install_dependencies_output_key" {
-  default = "ssm/state_manager_logs/install_dependencies/"
+  default = "ssm/state_manager_logs/dependencies/"
 }
 
 variable "ecr_repo_url" {
@@ -130,7 +160,7 @@ variable "kms_key_alias" {
   default = "alias/aws/ssm"
 }
 
-####AIRFLOW DB PARAMETERS####
+####AIRFLOW-DB####
 
 variable "create_airflow_db" {
   description = "Determines if module should launch an RDS instance to host Airflow meta-db on"
@@ -145,34 +175,114 @@ variable "create_airflow_db_sg" {
 }
 
 variable "airflow_db_engine" {
-  description = "The database type to be used for the airflow  (e.g. `postgres`, `mysql`)"
+  description = "The RDS type to be used for the Airflow DB"
   default = "postgres"
 }
 
 variable "airflow_db_engine_version" {
-  description = "The database version to be used for the airflow database"
+  description = "The RDS engine version to be used for the Airflow instance"
+  default = 11.8
 }
 
 variable "airflow_db_allocated_storage" {
-  description = "The allocated storage for the db in gibibytes"
+  description = "The allocated storage for the Airflow RDS in gibibytes"
   default = 20
 }
 
 variable "airflow_db_name" {
-  description = "The name of the Airflow meta-db"
+  description = "The name of the database within the Airflow RDS instance"
+  default = null
+}
+
+variable "airflow_db_instance_class" {
+  description = "The type of RDS to launch (e.g. \"db.t2.micro\")"
+  type = string
+  default = null
+}
+
+variable "airflow_db_port" {
+  description = "Airflow DB port (defaults to Postgres port)."
+  type = number
+  default = 5432
+}
+
+variable "airflow_db_username_ssm_key" {
+  description = "Existing SSM Parameter Store key used to retrieve the Airflow RDS instance username value"
   default = null
 }
 
 variable "airflow_db_username" {
-  description = "Airflow meta-db username (USE ENVIRONMENT VARS or retrieve from AWS SSM Parameter Store!)"
+  description = "Airflow RDS username"
   default = null
 }
 
 variable "airflow_db_password" {
-  description = "Airflow meta-db password (USE ENVIRONMENT VARS or retrieve from AWS SSM Parameter Store!)"
+  description = "Airflow RDS password"
   default = null
 }
 
+variable "airflow_db_password_ssm_key" {
+  description = "Existing SSM Parameter Store key used to retrieve the Airflow RDS instance password value"
+  default = null
+}
+
+variable "load_airflow_db_uri_to_ssm" {
+  description = "Determines if Airflow RDS URI should be uploaded to SSM Parameter store"
+  default = false
+}
+
+variable "airflow_db_uri_ssm_key_alias" {
+  description = "SSM Paramter Store key used for Airflow RDS URI value"
+  default = null
+}
 variable "airflow_db_tags" {
-  description = "Tags to associate with Airflow RDS meta-db"
+  description = "Tags to attach to the Airflow RDS"
+  default = {}
+}
+
+variable "airflow_db_ssm_tags" {
+  description = "Tags to attach to the SSM Paramter Store key-value pair for the Airflow URI"
+  default = {}
+}
+
+
+#### AIRFLOW-IAM ####
+
+variable "create_ec2_role" {
+  description = "Determiens if an IAM role should be created for the Airflow EC2"
+  default = true
+}
+
+variable "create_ec2_profile" {
+  description = "Determines if an EC2 profile should be created for the Airflow EC2"
+  default = true
+}
+
+variable "airflow_ec2_role_statements" {
+  description = "IAM policy statements to attach to the Airflow EC2 role"
+/* 
+ change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
+  type = list(object({
+    effect = string
+    resources = list(string)
+    actions = list(string)
+    condition = list(map(object({
+      test = string
+      variable = string
+      values = list(string)
+    })))
+  }))
+*/
+  type = list(any)
+  default = null
+}
+
+variable "airflow_ec2_allowed_actions" {
+  description = "List of AWS actions the Airflow Ec2 can perform (e.g. [\"s3:GetObject\"])"
+  default = null
+}
+
+variable "airflow_ec2_allowed_resources" {
+  description = "List of AWS resources associated with the allowed Airflow Ec2 actions"
+  default = null
 }
