@@ -273,10 +273,12 @@ variable "airflow_ec2_role_statements" {
 
 variable "airflow_ec2_allowed_actions" {
   description = "List of AWS actions the Airflow Ec2 can perform (e.g. [\"s3:GetObject\"])"
+  type = list(string)
   default = null
 }
 
 variable "airflow_ec2_allowed_resources" {
   description = "List of AWS resources associated with the allowed Airflow Ec2 actions"
+  type = list(string)
   default = null
 }
