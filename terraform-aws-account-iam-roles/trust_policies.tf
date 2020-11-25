@@ -57,7 +57,6 @@ data "aws_iam_policy_document" "assume_admin_role" {
   }
 }
 
-
 data "aws_iam_policy_document" "assume_dev_role_with_mfa" {
   count = var.dev_role_requires_mfa && length(var.dev_role_cross_account_arns) > 0 ? 1 : 0
   statement {
