@@ -98,6 +98,24 @@ data "aws_iam_policy_document" "airflow_permissions" {
             ]
         }
     }
+
+    dynamic "statement" {
+        for_each = var.airflow_ec2_has_ssm_access ? [1] : []
+        content {
+            sid = "SSMDocumentAccess"
+            effect = "Allow"
+            actions = [
+                "GetDocument",
+                "ListDocumentVersions"
+            ]
+            resources = [
+                "arn:aws:ssm:${var.region}::document/AWS-UpdateSSMAgent",
+                "arn:aws:ssm:${var.region}::document/AWS-RunShellScript",
+                "arn:aws:ssm:${var.region}::document/AWS-ConfigureAWSPackage"
+            ]
+        }
+    }
+
     dynamic "statement" {
         for_each = var.load_airflow_db_uri_to_ssm ? [1] : []
         content {

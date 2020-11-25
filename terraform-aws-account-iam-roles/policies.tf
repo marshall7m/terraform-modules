@@ -24,7 +24,6 @@ data "aws_iam_policy_document" "admin_permissions" {
                     values = statement.value.condition.values
                 }
             }
-            
         }
     }
 }
