@@ -18,19 +18,6 @@ resource "aws_codebuild_project" "infrastructure" {
     type                        = try(each.value.build_type, "LINUX_CONTAINER")
     image_pull_credentials_type = try(each.value.image_pull_credentials_type, "CODEBUILD")
 
-    dynamic "environment_variable" {
-        for_each = try(each.value.environment_variables, {}) 
-        content {
-            name  = environment_variable.key
-            value = environment_variable.value
-        }
-    }
-
-    environment_variable {
-      name  = "TARGET_DIRS"
-      value = join(" ", try(each.value.target_paths, var.target_paths))
-    }
-
     environment_variable {
       name  = "COMMANDS"
       value = join(" && ", each.value.commands)
@@ -54,6 +41,20 @@ resource "aws_codebuild_project" "infrastructure" {
     environment_variable {
       name  = "TF_INPUT"
       value = "false"
+    }
+
+    dynamic "environment_variable" {
+      for_each = each.value.target_paths != null || var.target_paths != null ? [1] : []
+      name  = "TARGET_DIRS"
+      value = join(" ", try(each.value.target_paths, var.target_paths))
+    }
+
+    dynamic "environment_variable" {
+        for_each = try(each.value.environment_variables, {}) 
+        content {
+            name  = environment_variable.key
+            value = environment_variable.value
+        }
     }
   }
   
