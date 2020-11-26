@@ -223,3 +223,26 @@ data "aws_iam_policy_document" "assume_tf_apply_role" {
     }
   }
 }
+
+data "aws_iam_policy_document" "assume_limited_s3_read_role" {
+  count = length(var.limited_s3_read_role_cross_account_arns) > 0 ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "AWS"
+      identifiers = var.limited_s3_read_role_cross_account_arns
+    }
+
+    dynamic "condition" {
+      for_each = var.limited_s3_read_role_conditions != [] ? {for condition in var.limited_s3_read_role_conditions: condition.test => condition} : null
+      content {
+        test     = condition.value.test
+        variable = condition.value.variable
+        values   = condition.value.values
+      }
+    }
+  }
+}

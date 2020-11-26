@@ -73,3 +73,17 @@ resource "aws_iam_role" "tf_apply_role" {
   tags = var.tf_apply_role_tags
 }
 
+resource "aws_iam_role" "limited_s3_read_role" {
+  count                = length(var.limited_s3_read_role_cross_account_arns) > 0 ? 1 : 0
+  name                 = var.limited_s3_read_role_name
+  path                 = var.limited_s3_read_role_path
+  max_session_duration = var.limited_s3_read_role_max_session_duration
+  description          = var.limited_s3_read_role_description
+
+  force_detach_policies = var.limited_s3_read_role_force_detach_policies
+  permissions_boundary  = var.limited_s3_read_role_permissions_boundary
+
+  assume_role_policy = data.aws_iam_policy_document.assume_limited_s3_read_role[0].json
+
+  tags = var.limited_s3_read_role_tags
+}

@@ -318,6 +318,7 @@ variable "custom_read_role_policy_arns" {
 
 
 #### TF_PLAN - ROLE ####
+
 variable "tf_plan_role_cross_account_arns" {
   type = list(string)
   default = []
@@ -413,7 +414,7 @@ variable "custom_tf_plan_role_policy_arns" {
 }
 
 
-#### tf_apply - ROLE ####
+#### TF-APPLY-ROLE ####
 variable "tf_apply_role_cross_account_arns" {
   type = list(string)
   default = []
@@ -504,6 +505,104 @@ variable "tf_apply_policy_path" {
 }
 
 variable "custom_tf_apply_role_policy_arns" {
+  type = list(string)
+  default = []
+}
+
+#### LIMITED-S3-READ-ROLE ####
+
+variable "limited_s3_read_role_cross_account_arns" {
+  type = list(string)
+  default = []
+}
+
+variable "limited_s3_read_role_name" {
+  default = "cross-account-limited-s3-read-access"
+}
+
+variable "limited_s3_read_role_path" {
+  default = "/"
+}
+
+variable "limited_s3_read_role_max_session_duration" {
+  default = 3600
+  type = number
+}
+
+variable "limited_s3_read_role_description" {
+  default = "Assumable role that allows trusted CI services to perform defined S3 read actions"
+}
+
+variable "limited_s3_read_role_force_detach_policies" {
+  type = bool
+  default = false
+}
+
+variable "limited_s3_read_role_permissions_boundary" {
+  type = string
+  default = ""
+}
+
+variable "limited_s3_read_role_tags" {
+  type = map(string)
+  default = {}
+}
+
+variable "limited_s3_read_allowed_resources" {
+  type = list(string)
+  default = null
+}
+
+variable "limited_s3_read_allowed_actions" {
+  type = list(string)
+  default = [
+    "s3:GetObject"
+  ]
+}
+
+variable "limited_s3_read_role_conditions" {
+  type = list(object({
+    test = string
+    variable = string
+    values = list(string)
+  }))
+  default = []
+}
+
+variable "limited_s3_read_role_statements" {
+  description = "IAM policy statements to add to the policy that can be attached to the limited_s3_read role"
+/* 
+ change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
+  type = list(object({
+    effect = string
+    resources = list(string)
+    actions = list(string)
+    condition = list(map(object({
+      test = string
+      variable = string
+      values = list(string)
+    })))
+  }))
+*/
+  type = list(any)
+  default = null
+}
+
+variable "limited_s3_read_policy_name" {
+  type = string
+  default = "cross-account-limited-s3-read-access-policy"
+}
+
+variable "limited_s3_read_policy_description" {
+  type = string
+  default = "Assumable role policy for limited s3 reads"
+}
+
+variable "limited_s3_read_policy_path" {
+  default = "/"
+}
+
+variable "custom_limited_s3_read_role_policy_arns" {
   type = list(string)
   default = []
 }

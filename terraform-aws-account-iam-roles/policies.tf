@@ -261,3 +261,56 @@ resource "aws_iam_role_policy_attachment" "custom_tf_apply_permissions" {
   role       = aws_iam_role.tf_apply_role[0].name
   policy_arn = element(var.custom_tf_apply_role_policy_arns, count.index)
 }
+
+#### LIMITED-S3-READ-IAM-POLICIES ####
+
+data "aws_iam_policy_document" "limited_s3_read_permissions" {
+    count = var.limited_s3_read_allowed_resources != null || var.limited_s3_read_role_statements != null ? 1 : 0
+    dynamic "statement" {
+        for_each = var.limited_s3_read_allowed_resources != null ? [1] : [0]
+        content {
+            effect = "Allow"
+            resources = var.limited_s3_read_allowed_resources
+            actions = var.limited_s3_read_allowed_actions
+        }
+    }
+    dynamic "statement" {
+        for_each = var.limited_s3_read_role_statements != null ? {for statement in var.limited_s3_read_role_statements: statement.effect => statement} : []
+        content {
+            effect = statement.value.effect
+            resources = statement.value.resources
+            actions = statement.value.actions
+            dynamic "condition" {
+                for_each = can(statement.value.condition) ? {for condition in statement.value.condition: condition.test => condition} : []
+                content {
+                    test = statement.value.condition.test
+                    variable = statement.value.condition.variable
+                    values = statement.value.condition.values
+                }
+            }
+            
+        }
+    }
+}
+
+resource "aws_iam_policy" "limited_s3_read_permissions" {
+    count = var.limited_s3_read_allowed_resources != null || var.limited_s3_read_role_statements != null ? 1 : 0
+    name = var.limited_s3_read_policy_name
+    description = var.limited_s3_read_policy_description
+    path = var.limited_s3_read_policy_path
+    policy = data.aws_iam_policy_document.limited_s3_read_permissions[0].json
+}
+
+resource "aws_iam_role_policy_attachment" "limited_s3_read_permissions" {
+  count = var.limited_s3_read_allowed_resources != null || var.limited_s3_read_role_statements != null ? 1 : 0
+
+  role       = aws_iam_role.limited_s3_read_role[0].name
+  policy_arn = aws_iam_policy.limited_s3_read_permissions[0].arn
+}
+
+resource "aws_iam_role_policy_attachment" "custom_limited_s3_read_permissions" {
+  count = length(var.limited_s3_read_role_cross_account_arns) > 0 && length(var.custom_limited_s3_read_role_policy_arns) > 0 ? length(var.custom_limited_s3_read_role_policy_arns) : 0
+
+  role       = aws_iam_role.limited_s3_read_role[0].name
+  policy_arn = element(var.custom_limited_s3_read_role_policy_arns, count.index)
+}
