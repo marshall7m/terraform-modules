@@ -42,4 +42,8 @@ resource "aws_iam_role" "this" {
     force_detach_policies = var.role_force_detach_policies
     permissions_boundary  = var.role_permissions_boundary
     assume_role_policy = data.aws_iam_policy_document.trust[0].json
+    tags = merge(
+        var.role_tags,
+        var.common_tags
+    )
 }
