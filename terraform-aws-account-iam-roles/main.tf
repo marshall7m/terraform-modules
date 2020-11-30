@@ -1,4 +1,4 @@
-resource "aws_iam_role" "admin_role" {
+resource "aws_iam_role" "admin" {
   count                = length(var.admin_role_cross_account_arns) > 0 ? 1 : 0
   name                 = var.admin_role_name
   path                 = var.admin_role_path
@@ -13,7 +13,7 @@ resource "aws_iam_role" "admin_role" {
   tags = var.admin_role_tags
 }
 
-resource "aws_iam_role" "dev_role" {
+resource "aws_iam_role" "dev" {
   count                = length(var.dev_role_cross_account_arns) > 0 ? 1 : 0
   name                 = var.dev_role_name
   path                 = var.dev_role_path
@@ -28,7 +28,7 @@ resource "aws_iam_role" "dev_role" {
   tags = var.dev_role_tags
 }
 
-resource "aws_iam_role" "read_role" {
+resource "aws_iam_role" "read" {
   count                = length(var.read_role_cross_account_arns) > 0 ? 1 : 0
   name                 = var.read_role_name
   path                 = var.read_role_path
@@ -43,7 +43,7 @@ resource "aws_iam_role" "read_role" {
   tags = var.read_role_tags
 }
 
-resource "aws_iam_role" "tf_plan_role" {
+resource "aws_iam_role" "tf_plan" {
   count                = length(var.tf_plan_role_cross_account_arns) > 0 ? 1 : 0
   name                 = var.tf_plan_role_name
   path                 = var.tf_plan_role_path
@@ -58,7 +58,7 @@ resource "aws_iam_role" "tf_plan_role" {
   tags = var.tf_plan_role_tags
 }
 
-resource "aws_iam_role" "tf_apply_role" {
+resource "aws_iam_role" "tf_apply" {
   count                = length(var.tf_apply_role_cross_account_arns) > 0 ? 1 : 0
   name                 = var.tf_apply_role_name
   path                 = var.tf_apply_role_path
@@ -73,7 +73,7 @@ resource "aws_iam_role" "tf_apply_role" {
   tags = var.tf_apply_role_tags
 }
 
-resource "aws_iam_role" "limited_s3_read_role" {
+resource "aws_iam_role" "limited_s3_read" {
   count                = length(var.limited_s3_read_role_cross_account_arns) > 0 ? 1 : 0
   name                 = var.limited_s3_read_role_name
   path                 = var.limited_s3_read_role_path

@@ -606,3 +606,62 @@ variable "custom_limited_s3_read_role_policy_arns" {
   type = list(string)
   default = []
 }
+
+#### COMMON-POLICY ####
+
+variable "common_allowed_resources" {
+  type = list(string)
+  default = null
+}
+
+variable "common_allowed_actions" {
+  type = list(string)
+  default = null
+}
+
+variable "common_role_conditions" {
+  type = list(object({
+    test = string
+    variable = string
+    values = list(string)
+  }))
+  default = []
+}
+
+variable "common_role_statements" {
+  description = "IAM policy statements to add to the common policy attached to defined roles"
+/* 
+ change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
+  type = list(object({
+    effect = string
+    resources = list(string)
+    actions = list(string)
+    condition = list(map(object({
+      test = string
+      variable = string
+      values = list(string)
+    })))
+  }))
+*/
+  type = list(any)
+  default = null
+}
+
+variable "common_policy_name" {
+  type = string
+  default = "cross-account-tf-apply-access-policy"
+}
+
+variable "common_policy_description" {
+  type = string
+  default = "Common role policy"
+}
+
+variable "common_policy_path" {
+  default = "/"
+}
+
+variable "custom_common_role_policy_arns" {
+  type = list(string)
+  default = []
+}
