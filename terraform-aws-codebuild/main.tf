@@ -54,14 +54,21 @@ resource "aws_codebuild_project" "this" {
     git_clone_depth = try(var.build_source.git_clone_depth, null)
     insecure_ssl = try(var.build_source.insecure_ssl, null)
     report_build_status =try(var.build_source.report_build_status, null)
-    auth {
-      type = try(var.build_source.auth.type, null)
-      resource = try(var.build_source.auth.resource, null)
-    }
-    git_submodules_config {
-      fetch_submodules = try(var.build_source.git_submodules_config.fetch_submodules, null)
-    }
     buildspec = try(var.build_source.buildspec, null)
+    
+    dynamic "auth" {
+      for_each = can(var.build_source.auth) ? [1] : []
+      content {
+        type = var.build_source.auth.type
+        resource = try(var.build_source.auth.resource, null)
+      }
+    }
+    dynamic "git_submodules_config" {
+      for_each = can(var.build_source.git_submodules_config) ? [1] : []
+      content {
+        fetch_submodules = var.build_source.git_submodules_config.fetch_submodules
+      }
+    }
   }
  
     tags = merge(
