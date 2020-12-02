@@ -94,6 +94,7 @@ variable "artifacts" {
 variable "secondary_artifacts" {
     description = "Build project's secondary output artifacts configuration"
     type = map
+    default = null
 }
 
 variable "build_compute_type" {
