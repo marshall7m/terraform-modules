@@ -52,10 +52,15 @@ resource "aws_codebuild_project" "this" {
     type            = var.build_source.type
     location        = try(var.build_source.location, null)
     git_clone_depth = try(var.build_source.git_clone_depth, null)
-    git_submodules_config = try(var.build_source.git_submodules_config, null)
     insecure_ssl = try(var.build_source.insecure_ssl, null)
     report_build_status =try(var.build_source.report_build_status, null)
-    auth = try(var.build_source.auth, null)
+    auth {
+      type = try(var.build_source.auth.type, null)
+      resource = try(var.build_source.auth.resource, null)
+    }
+    git_submodules_config {
+      fetch_submodules = try(var.build_source.git_submodules_config.fetch_submodules, null)
+    }
     buildspec = try(var.build_source.buildspec, null)
   }
  

@@ -59,6 +59,8 @@ variable "role_tags" {
 
 #### CODE-BUILD ####
 
+# See for reference: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project
+
 variable "name" {
     description = "Build name (before adding var.resource_prefix and var.resource_suffix)"
     type = string
