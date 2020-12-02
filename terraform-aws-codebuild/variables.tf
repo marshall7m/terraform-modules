@@ -1,4 +1,3 @@
-#### GLOBAL-BUILD-PARAMETERS ####
 
 variable "resource_prefix" {
   description = "Prefix to use for all resource names"
@@ -11,26 +10,49 @@ variable "resource_suffix" {
   default = ""
 }
 
-variable "terragrunt_version" {
-    description = "Terragrunt version to download within the build's respective buildspec.yml"
-    type = string
-    default = "0.25.4"
+variable "common_tags" {
+    description = "Tags to add to all resources"
+    type = map(string)
+    default = {}
 }
 
-variable "terraform_version" {
-    description =  "Terraform version to download within the build's respective buildspec.yml"
-    type = string
-    default = "0.13.5"
+#### IAM-ROLE ####
+
+variable "cross_account_assumable_roles" {
+    type = list(string)
+    default = []
 }
 
- variable "common_tags" {
-     description = "Tags to attach to all builds"
-     type = map
-     default = null
- }
+variable "role_path" {
+  default = "/"
+}
 
-#### SINGLE-BUILD||DEFAULT-BUILD-PARAMETERS ####
- 
+variable "role_max_session_duration" {
+  default = 3600
+  type = number
+}
+
+variable "role_description" {
+  default = "Assumable role that allows trusted entities to perform administrative actions"
+}
+
+variable "role_force_detach_policies" {
+  type = bool
+  default = false
+}
+
+variable "role_permissions_boundary" {
+  type = string
+  default = ""
+}
+
+variable "role_tags" {
+  type = map(string)
+  default = {}
+}
+
+#### CODE-BUILD ####
+
 variable "name" {
     description = "Build name (before adding var.resource_prefix and var.resource_suffix)"
     type = string
@@ -44,7 +66,7 @@ variable "webhook_filter_groups" {
         type = string
         exclude_matched_pattern = bool
     })))
-    default = []
+    default = null
 }
 
 variable "source_type" {
@@ -62,14 +84,13 @@ variable "commands" {
     default = null
 }
 
-variable "tags" {
+variable "build_tags" {
     type = map
     default = {}
 }
 
 variable "buildspec" {
     type = string
-    default = "buildspec_tf_default.yml"
 }
 
 variable "artifacts" {
@@ -129,47 +150,4 @@ variable "environment_variables" {
         type = string
     }))
     default = []
-}
-
-#### MULTI-BUILD-PARAMETERS ####
-
-variable "builds" {
-    type = any
-    default = null
-
-/*
-TODO: 
-change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional map input
-type = list(object({
-    name = string
-    trigger_branch = string
-    target_paths = list(string)
-    source_type = string
-    source_location = string
-    git_clone_depth = string
-    buildspec = string
-    commands = list(string)
-    service_role_arn = string
-    artifacts = map(string)
-    build_compute_type = string
-    build_image = string
-    build_type = string
-    build_image_pull_credentials_type = string
-    environment_variables = list(object({
-        name = string
-        value = string
-        type = string
-    }))
-    cw_stream_name = string
-    cw_group_name = string
-    s3_log_path = string
-    s3_log_encryption_disabled = bool
-    tags = map(string)
-    webhook_filter_groups = list(list(object({
-        pattern = string
-        type = string
-        exclude_matched_pattern = bool
-    })))
-}))
-*/
 }
