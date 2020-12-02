@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "cross_account_assume_role" {
 resource "aws_iam_policy" "cross_account_assume_role" {
     count = var.cross_account_assumable_roles != null ? 1 : 0
     name = "${var.resource_prefix}-${var.name}-${var.resource_suffix}"
-    description = "Allows codebuild service to assume the defined roles within other AWS accounts"
+    description = var.role_description
     path = var.role_path
     policy = data.aws_iam_policy_document.cross_account_assume_role[0].json
 }

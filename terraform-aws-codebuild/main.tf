@@ -49,12 +49,14 @@ resource "aws_codebuild_project" "this" {
   }
 
   source {
-    type            = var.source_type
-    location        = null
-    git_clone_depth = null
-
-    buildspec = var.buildspec
-
+    type            = var.build_source.type
+    location        = try(var.build_source.location, null)
+    git_clone_depth = try(var.build_source.git_clone_depth, null)
+    git_submodules_config = try(var.build_source.git_submodules_config, null)
+    insecure_ssl = try(var.build_source.insecure_ssl, null)
+    report_build_status =try(var.build_source.report_build_status, null)
+    auth = try(var.build_source.auth, null)
+    buildspec = try(var.build_source.buildspec, null)
   }
  
     tags = merge(
