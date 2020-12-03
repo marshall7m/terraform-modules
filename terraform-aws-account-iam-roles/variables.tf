@@ -415,6 +415,7 @@ variable "custom_tf_plan_role_policy_arns" {
 
 
 #### TF-APPLY-ROLE ####
+
 variable "tf_apply_role_cross_account_arns" {
   type = list(string)
   default = []
@@ -530,7 +531,7 @@ variable "limited_s3_read_role_max_session_duration" {
 }
 
 variable "limited_s3_read_role_description" {
-  default = "Assumable role that allows trusted CI services to perform defined S3 read actions"
+  default = "Assumable role that allows trusted cross account entities to perform defined S3 read actions"
 }
 
 variable "limited_s3_read_role_force_detach_policies" {
@@ -649,7 +650,7 @@ variable "common_role_statements" {
 
 variable "common_policy_name" {
   type = string
-  default = "cross-account-tf-apply-access-policy"
+  default = "cross-account-access-common-policy"
 }
 
 variable "common_policy_description" {
@@ -662,6 +663,102 @@ variable "common_policy_path" {
 }
 
 variable "custom_common_role_policy_arns" {
+  type = list(string)
+  default = []
+}
+
+#### CD-ROLE ####
+
+variable "cd_role_cross_account_arns" {
+  type = list(string)
+  default = []
+}
+
+variable "cd_role_name" {
+  default = "cross-account-cd-access"
+}
+
+variable "cd_role_path" {
+  default = "/"
+}
+
+variable "cd_role_max_session_duration" {
+  default = 3600
+  type = number
+}
+
+variable "cd_role_description" {
+  default = "Assumable role that allows trusted cross-account services (e.g. codepipeline) to trigger CodeDeploy deployments and read/write to cross account S3 buckets (e.g. writing output artifacts to a cross-account codepipeline artifact bucket)"
+}
+
+variable "cd_role_force_detach_policies" {
+  type = bool
+  default = false
+}
+
+variable "cd_role_permissions_boundary" {
+  type = string
+  default = ""
+}
+
+variable "cd_role_tags" {
+  type = map(string)
+  default = {}
+}
+
+variable "cd_allowed_resources" {
+  type = list(string)
+  default = null
+}
+
+variable "cd_allowed_actions" {
+  type = list(string)
+  default = null
+}
+
+variable "cd_role_conditions" {
+  type = list(object({
+    test = string
+    variable = string
+    values = list(string)
+  }))
+  default = []
+}
+
+variable "cd_role_statements" {
+  description = "IAM policy statements to add to the policy that can be attached to the cd role"
+/* 
+ change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
+  type = list(object({
+    effect = string
+    resources = list(string)
+    actions = list(string)
+    condition = list(map(object({
+      test = string
+      variable = string
+      values = list(string)
+    })))
+  }))
+*/
+  type = list(any)
+  default = null
+}
+
+variable "cd_policy_name" {
+  type = string
+  default = "cross-account-cd-access-policy"
+}
+
+variable "cd_policy_description" {
+  type = string
+  default = "Assumable cd role policy"
+}
+
+variable "cd_policy_path" {
+  default = "/"
+}
+
+variable "custom_cd_role_policy_arns" {
   type = list(string)
   default = []
 }

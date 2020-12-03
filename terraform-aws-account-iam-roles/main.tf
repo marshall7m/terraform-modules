@@ -87,3 +87,18 @@ resource "aws_iam_role" "limited_s3_read" {
 
   tags = var.limited_s3_read_role_tags
 }
+
+resource "aws_iam_role" "cd" {
+  count                = length(var.cd_role_cross_account_arns) > 0 ? 1 : 0
+  name                 = var.cd_role_name
+  path                 = var.cd_role_path
+  max_session_duration = var.cd_role_max_session_duration
+  description          = var.cd_role_description
+
+  force_detach_policies = var.cd_role_force_detach_policies
+  permissions_boundary  = var.cd_role_permissions_boundary
+
+  assume_role_policy = data.aws_iam_policy_document.assume_cd_role[0].json
+
+  tags = var.cd_role_tags
+}

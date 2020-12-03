@@ -21,3 +21,7 @@ output "tf_apply_role_arn" {
 output "limited_s3_read_role_arn" {
   value = try(aws_iam_role.limited_s3_read[0].arn, null)
 }
+
+output "cd_role_arn" {
+  value = try(aws_iam_role.cd[0].arn, null)
+}

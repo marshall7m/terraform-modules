@@ -169,7 +169,7 @@ data "aws_iam_policy_document" "tf_plan_permissions" {
         }
     }
     dynamic "statement" {
-        for_each = var.tf_plan_role_statements != [] ? {for statement in var.tf_plan_role_statements: statement.effect => statement} : {}
+        for_each = try({for statement in var.tf_plan_role_statements: statement.effect => statement}, {})
         content {
             effect = statement.value.effect
             resources = statement.value.resources
@@ -214,7 +214,7 @@ resource "aws_iam_role_policy_attachment" "custom_tf_plan_permissions" {
 data "aws_iam_policy_document" "tf_apply_permissions" {
     count = var.tf_apply_allowed_resources != null && var.tf_apply_allowed_actions != null || var.tf_apply_role_statements != null ? 1 : 0
     dynamic "statement" {
-        for_each = var.tf_apply_allowed_resources != [] && var.tf_apply_allowed_actions != [] ? {} : null
+        for_each = var.tf_apply_allowed_resources != [] && var.tf_apply_allowed_actions != [] ? [1] : []
         content {
             effect = "Allow"
             resources = var.tf_apply_allowed_resources
@@ -222,7 +222,7 @@ data "aws_iam_policy_document" "tf_apply_permissions" {
         }
     }
     dynamic "statement" {
-        for_each = var.tf_apply_role_statements != [] ? {for statement in var.tf_apply_role_statements: statement.effect => statement} : {}
+        for_each = try({for statement in var.tf_apply_role_statements: statement.effect => statement}, {})
         content {
             effect = statement.value.effect
             resources = statement.value.resources
@@ -249,7 +249,7 @@ resource "aws_iam_policy" "tf_apply_permissions" {
 }
 
 resource "aws_iam_role_policy_attachment" "tf_apply_permissions" {
-  count = var.tf_apply_allowed_resources != null && var.tf_apply_allowed_actions != null || var.tf_apply_role_statements != null ? 1 : 0
+  count = can(aws_iam_role.tf_apply[0].name) ? 1 : 0
 
   role       = aws_iam_role.tf_apply[0].name
   policy_arn = aws_iam_policy.tf_apply_permissions[0].arn
@@ -355,15 +355,61 @@ resource "aws_iam_policy" "common" {
 }
 
 resource "aws_iam_role_policy_attachment" "common" {
-  for_each = toset(compact([
+  for_each = can(aws_iam_policy.common[0]) ? toset(compact([
       try(aws_iam_role.admin[0].name, null),
       try(aws_iam_role.dev[0].name, null),
       try(aws_iam_role.read[0].name, null),
       try(aws_iam_role.tf_plan[0].name, null),
       try(aws_iam_role.tf_apply[0].name, null),
-      try(aws_iam_role.limited_s3_read[0].name, null)
-  ]))
+      try(aws_iam_role.limited_s3_read[0].name, null),
+      try(aws_iam_role.cd[0].name, null)
+  ])) : []
 
   role       = each.value
   policy_arn = aws_iam_policy.common[0].arn
+}
+
+#### CD-ROLE-POLICIES ####
+
+data "aws_iam_policy_document" "cd" {
+    count = var.cd_allowed_resources != null || var.cd_role_statements != null ? 1 : 0
+    dynamic "statement" {
+        for_each = var.cd_allowed_resources != null ? [1] : [0]
+        content {
+            effect = "Allow"
+            resources = var.cd_allowed_resources
+            actions = var.cd_allowed_actions
+        }
+    }
+    dynamic "statement" {
+        for_each = var.cd_role_statements != null ? {for statement in var.cd_role_statements: statement.effect => statement} : []
+        content {
+            effect = statement.value.effect
+            resources = statement.value.resources
+            actions = statement.value.actions
+            dynamic "condition" {
+                for_each = can(statement.value.condition) ? {for condition in statement.value.condition: condition.test => condition} : []
+                content {
+                    test = statement.value.condition.test
+                    variable = statement.value.condition.variable
+                    values = statement.value.condition.values
+                }
+            }
+            
+        }
+    }
+}
+
+resource "aws_iam_policy" "cd" {
+    count = var.cd_allowed_resources != null || var.cd_role_statements != null ? 1 : 0
+    name = var.cd_policy_name
+    description = var.cd_policy_description
+    path = var.cd_policy_path
+    policy = data.aws_iam_policy_document.cd[0].json
+}
+
+resource "aws_iam_role_policy_attachment" "cd" {
+  count = can(aws_iam_role.cd[0].name) ? 1 : 0
+  role       = aws_iam_role.cd[0].name
+  policy_arn = aws_iam_policy.cd[0].arn
 }

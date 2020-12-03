@@ -246,3 +246,26 @@ data "aws_iam_policy_document" "assume_limited_s3_read_role" {
     }
   }
 }
+
+data "aws_iam_policy_document" "assume_cd_role" {
+  count = length(var.cd_role_cross_account_arns) > 0 ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "AWS"
+      identifiers = var.cd_role_cross_account_arns
+    }
+
+    dynamic "condition" {
+      for_each = var.cd_role_conditions != [] ? {for condition in var.cd_role_conditions: condition.test => condition} : null
+      content {
+        test     = condition.value.test
+        variable = condition.value.variable
+        values   = condition.value.values
+      }
+    }
+  }
+}
