@@ -161,7 +161,7 @@ resource "aws_iam_role_policy_attachment" "custom_read_permissions" {
 data "aws_iam_policy_document" "tf_plan_permissions" {
     count = var.tf_plan_allowed_resources != null && var.tf_plan_allowed_actions != null || var.tf_plan_role_statements != null ? 1 : 0
     dynamic "statement" {
-        for_each = var.tf_plan_allowed_resources != [] && var.tf_plan_allowed_actions != [] ? {} : null
+        for_each = var.tf_plan_allowed_resources != [] && var.tf_plan_allowed_actions != [] ? [1] : []
         content {
             effect = "Allow"
             resources = var.tf_plan_allowed_resources
