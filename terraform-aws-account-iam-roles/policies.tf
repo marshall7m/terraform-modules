@@ -249,7 +249,7 @@ resource "aws_iam_policy" "tf_apply_permissions" {
 }
 
 resource "aws_iam_role_policy_attachment" "tf_apply_permissions" {
-  count = can(aws_iam_role.tf_apply[0].name) ? 1 : 0
+  count = var.tf_apply_allowed_resources != null && var.tf_apply_allowed_actions != null || var.tf_apply_role_statements != null ? 1 : 0
 
   role       = aws_iam_role.tf_apply[0].name
   policy_arn = aws_iam_policy.tf_apply_permissions[0].arn
@@ -355,7 +355,7 @@ resource "aws_iam_policy" "common" {
 }
 
 resource "aws_iam_role_policy_attachment" "common" {
-  for_each = can(aws_iam_policy.common[0]) ? toset(compact([
+  for_each = var.common_allowed_resources != null || var.common_role_statements != null ? toset(compact([
       try(aws_iam_role.admin[0].name, null),
       try(aws_iam_role.dev[0].name, null),
       try(aws_iam_role.read[0].name, null),
@@ -401,7 +401,7 @@ data "aws_iam_policy_document" "cd" {
 }
 
 resource "aws_iam_policy" "cd" {
-    count = var.cd_allowed_resources != null || var.cd_role_statements != null ? 1 : 0
+    count = var.cd_allowed_resources != null && var.cd_allowed_actions != null || var.cd_role_statements != null ? 1 : 0
     name = var.cd_policy_name
     description = var.cd_policy_description
     path = var.cd_policy_path
@@ -409,7 +409,7 @@ resource "aws_iam_policy" "cd" {
 }
 
 resource "aws_iam_role_policy_attachment" "cd" {
-  count = can(aws_iam_role.cd[0].name) ? 1 : 0
+  count = var.cd_allowed_resources != null && var.cd_allowed_actions != null || var.cd_role_statements != null ? 1 : 0
   role       = aws_iam_role.cd[0].name
   policy_arn = aws_iam_policy.cd[0].arn
 }
