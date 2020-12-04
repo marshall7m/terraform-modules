@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "assume_admin_role_with_mfa" {
     }
 
     dynamic "condition" {
-      for_each = var.admin_role_conditions != [] ? {for condition in var.admin_role_conditions: condition.test => condition} : null
+      for_each = var.admin_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "assume_admin_role" {
     }
 
     dynamic "condition" {
-      for_each = var.admin_role_conditions != [] ? {for condition in var.admin_role_conditions: condition.test => condition} : null
+      for_each = var.admin_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "assume_dev_role_with_mfa" {
     }
 
     dynamic "condition" {
-      for_each = var.dev_role_conditions != [] ? {for condition in var.dev_role_conditions: condition.test => condition} : null
+      for_each = var.dev_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -107,7 +107,7 @@ data "aws_iam_policy_document" "assume_dev_role" {
     }
 
     dynamic "condition" {
-      for_each = var.dev_role_conditions != [] ? {for condition in var.dev_role_conditions: condition.test => condition} : null
+      for_each = var.dev_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -142,7 +142,7 @@ data "aws_iam_policy_document" "assume_read_role_with_mfa" {
     }
 
     dynamic "condition" {
-      for_each = var.read_role_conditions != [] ? {for condition in var.read_role_conditions: condition.test => condition} : null
+      for_each = var.read_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -168,7 +168,7 @@ data "aws_iam_policy_document" "assume_read_role" {
     }
 
     dynamic "condition" {
-      for_each = var.read_role_conditions != [] ? {for condition in var.read_role_conditions: condition.test => condition} : null
+      for_each = var.read_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -191,7 +191,7 @@ data "aws_iam_policy_document" "assume_tf_plan_role" {
     }
 
     dynamic "condition" {
-      for_each = var.tf_plan_role_conditions != [] ? {for condition in var.tf_plan_role_conditions: condition.test => condition} : null
+      for_each = var.tf_plan_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -214,7 +214,7 @@ data "aws_iam_policy_document" "assume_tf_apply_role" {
     }
 
     dynamic "condition" {
-      for_each = var.tf_apply_role_conditions != [] ? {for condition in var.tf_apply_role_conditions: condition.test => condition} : null
+      for_each = var.tf_apply_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -237,7 +237,7 @@ data "aws_iam_policy_document" "assume_limited_s3_read_role" {
     }
 
     dynamic "condition" {
-      for_each = var.limited_s3_read_role_conditions != [] ? {for condition in var.limited_s3_read_role_conditions: condition.test => condition} : null
+      for_each = var.limited_s3_read_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable
@@ -260,7 +260,7 @@ data "aws_iam_policy_document" "assume_cd_role" {
     }
 
     dynamic "condition" {
-      for_each = var.cd_role_conditions != [] ? {for condition in var.cd_role_conditions: condition.test => condition} : null
+      for_each = var.cd_role_conditions
       content {
         test     = condition.value.test
         variable = condition.value.variable

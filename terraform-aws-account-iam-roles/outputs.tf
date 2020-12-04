@@ -1,16 +1,16 @@
-output "admin_role_arn"{
+output "admin_role_arn" {
   value = try(aws_iam_role.admin[0].arn, null)
 }
 
-output "dev_role_arn"{
+output "dev_role_arn" {
   value = try(aws_iam_role.dev[0].arn, null)
 }
 
-output "read_role_arn"{
+output "read_role_arn" {
   value = try(aws_iam_role.read[0].arn, null)
 }
 
-output "tf_plan_role_arn"{
+output "tf_plan_role_arn" {
   value = try(aws_iam_role.tf_plan[0].arn, null)
 }
 
