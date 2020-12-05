@@ -77,7 +77,7 @@ variable "admin_role_conditions" {
   default = []
 }
 
-variable "admin_role_statements" {
+variable "admin_statements" {
   description = "IAM policy statements used to define the permission for the role"
   /* 
  change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
@@ -199,7 +199,7 @@ variable "dev_role_conditions" {
   default = []
 }
 
-variable "dev_role_statements" {
+variable "dev_statements" {
   description = "IAM policy statements used to define the permission for the role"
   /* 
  change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
@@ -321,7 +321,7 @@ variable "read_role_conditions" {
   default = []
 }
 
-variable "read_role_statements" {
+variable "read_statements" {
   description = "IAM policy statements used to define the permission for the role"
   /* 
  change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
@@ -431,7 +431,7 @@ variable "limited_s3_read_role_conditions" {
   default = []
 }
 
-variable "limited_s3_read_role_statements" {
+variable "limited_s3_read_statements" {
   description = "IAM policy statements used to define the permission for the role"
   /* 
  change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
@@ -547,7 +547,7 @@ variable "tf_plan_role_conditions" {
   default = []
 }
 
-variable "tf_plan_role_statements" {
+variable "tf_plan_statements" {
   description = "IAM policy statements to add to the policy that can be attached to the tf_plan role"
   /* 
  change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
@@ -654,7 +654,7 @@ variable "tf_apply_role_conditions" {
   default = []
 }
 
-variable "tf_apply_role_statements" {
+variable "tf_apply_statements" {
   description = "IAM policy statements used to define the permission for the role"
   /* 
  change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
@@ -764,7 +764,7 @@ variable "cd_role_conditions" {
   default = []
 }
 
-variable "cd_role_statements" {
+variable "cd_statements" {
   description = "IAM policy statements used to define the permission for the role"
   /* 
  change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
