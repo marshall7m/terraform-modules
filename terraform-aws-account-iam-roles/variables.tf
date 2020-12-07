@@ -92,8 +92,8 @@ variable "admin_statements" {
     })))
   }))
 */
-  type    = list(any)
-  default = null
+  type    = any
+  default = []
 }
 
 variable "admin_policy_name" {
@@ -214,8 +214,8 @@ variable "dev_statements" {
     })))
   }))
 */
-  type    = list(any)
-  default = null
+  type    = any
+  default = []
 }
 
 variable "dev_policy_name" {
@@ -336,8 +336,8 @@ variable "read_statements" {
     })))
   }))
 */
-  type    = list(any)
-  default = null
+  type    = any
+  default = []
 }
 
 variable "read_policy_name" {
@@ -446,8 +446,8 @@ variable "limited_s3_read_statements" {
     })))
   }))
 */
-  type    = list(any)
-  default = null
+  type    = any
+  default = []
 }
 
 variable "limited_s3_read_policy_name" {
@@ -488,12 +488,14 @@ variable "limited_s3_read_role_mfa_age" {
 #### TF_PLAN - ROLE ####
 
 variable "tf_plan_role_cross_account_arns" {
-  type    = list(string)
-  default = []
+  description = "List of ARNs allowed to assume the role"
+  type        = list(string)
+  default     = []
 }
 
 variable "tf_plan_role_name" {
-  default = "cross-account-tf-plan-access"
+  description = "Role name"
+  default     = "cross-account-tf-plan-access"
 }
 
 variable "tf_plan_role_path" {
@@ -508,7 +510,7 @@ variable "tf_plan_role_max_session_duration" {
 }
 
 variable "tf_plan_role_description" {
-  default = "Assumable role that allows trusted CI services to perform defined read/list actions"
+  default = "Cross-account assumable role"
 }
 
 variable "tf_plan_role_force_detach_policies" {
@@ -518,23 +520,27 @@ variable "tf_plan_role_force_detach_policies" {
 }
 
 variable "tf_plan_role_permissions_boundary" {
-  type    = string
-  default = ""
+  description = "Permission boundary policy ARN used for role"
+  type        = string
+  default     = ""
 }
 
 variable "tf_plan_role_tags" {
-  type    = map(string)
-  default = {}
+  description = "Tags to attach to the role"
+  type        = map(string)
+  default     = {}
 }
 
 variable "tf_plan_allowed_resources" {
-  type    = list(string)
-  default = null
+  description = "List of resources the role will be allowed to perform on"
+  type        = list(string)
+  default     = null
 }
 
 variable "tf_plan_allowed_actions" {
-  type    = list(string)
-  default = null
+  description = "List of actions the role will be allowed to perform"
+  type        = list(string)
+  default     = null
 }
 
 variable "tf_plan_role_conditions" {
@@ -548,7 +554,7 @@ variable "tf_plan_role_conditions" {
 }
 
 variable "tf_plan_statements" {
-  description = "IAM policy statements to add to the policy that can be attached to the tf_plan role"
+  description = "IAM policy statements used to define the permission for the role"
   /* 
  change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
   type = list(object({
@@ -562,29 +568,32 @@ variable "tf_plan_statements" {
     })))
   }))
 */
-  type    = list(any)
-  default = null
-}
-
-variable "tf_plan_policy_name" {
-  type    = string
-  default = "cross-account-tf-plan-access-policy"
-}
-
-variable "tf_plan_policy_description" {
-  type    = string
-  default = "Assumable tf_plan role policy"
-}
-
-variable "tf_plan_policy_path" {
-  default = "/"
-}
-
-variable "custom_tf_plan_role_policy_arns" {
-  type    = list(string)
+  type    = any
   default = []
 }
 
+variable "tf_plan_policy_name" {
+  description = "Name of the IAM policy used for defining the role permissions"
+  type        = string
+  default     = "cross-account-tf-plan-access"
+}
+
+variable "tf_plan_policy_description" {
+  description = "Description of the IAM policy used for defining the role permissions"
+  type        = string
+  default     = "Assumable tf-plan role policy"
+}
+
+variable "tf_plan_policy_path" {
+  description = "Path of the IAM policy used for defining the role permissions"
+  default     = "/"
+}
+
+variable "custom_tf_plan_role_policy_arns" {
+  description = "List of IAM policy ARNs to attach to the role"
+  type        = list(string)
+  default     = []
+}
 
 #### TF-APPLY-ROLE ####
 
@@ -669,8 +678,8 @@ variable "tf_apply_statements" {
     })))
   }))
 */
-  type    = list(any)
-  default = null
+  type    = any
+  default = []
 }
 
 variable "tf_apply_policy_name" {
@@ -779,8 +788,8 @@ variable "cd_statements" {
     })))
   }))
 */
-  type    = list(any)
-  default = null
+  type    = any
+  default = []
 }
 
 variable "cd_policy_name" {
