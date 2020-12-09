@@ -1,15 +1,3 @@
-
-variable "resource_prefix" {
-  description = "Prefix to use for all resource names"
-  type = string
-  default = ""
-}
-
-variable "resource_suffix" {
-  description = "Suffix to use for all resource names"
-  default = ""
-}
-
 variable "common_tags" {
     description = "Tags to add to all resources"
     type = map(string)
@@ -62,7 +50,7 @@ variable "role_tags" {
 # See for reference: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project
 
 variable "name" {
-    description = "Build name (before adding var.resource_prefix and var.resource_suffix)"
+    description = "Build name (used also for codebuild policy name)"
     type = string
     default = null
 }

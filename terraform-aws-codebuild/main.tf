@@ -1,5 +1,5 @@
 resource "aws_codebuild_project" "this" {
-  name          = "${var.resource_prefix}-${var.name}-${var.resource_suffix}"
+  name          = var.name
   description   = "Terraform managed codebuild project"
   build_timeout = "5"
   service_role  = coalesce(var.service_role_arn, aws_iam_role.this[0].arn)
