@@ -6,7 +6,7 @@ locals {
     #Arns of other aws accounts
     trusted_cross_account_arns = formatlist("arn:aws:iam::%s:root", distinct([for id in data.aws_arn.action_role_arns[*].account: id if id != var.account_id]))
     #List of distinct action providers used to configure pipeline policy
-    action_providers = distinct(flatten([var.stages[*].actions[*].provider]))
+    action_providers = distinct(var.stages[*].actions[*].provider)
 }
 
 resource "aws_codepipeline" "this" {
@@ -39,8 +39,8 @@ resource "aws_codepipeline" "this" {
                 owner            = action.value.owner
                 provider         = action.value.provider
                 version          = action.value.version
-                input_artifacts = try(action.value.input_artifacts, null)
-                output_artifacts = try(action.value.output_artifacts, null)
+                input_artifacts = try(action.value.input_artifacts, [])
+                output_artifacts = try(action.value.output_artifacts, [])
                 run_order = try(action.value.run_order, null)
                 role_arn = try(action.value.role_arn, null)
                 region = try(action.value.region, null)

@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "s3" {
     statement {
         sid = "DenyUnEncryptedObjectUploads"
         effect = "Deny"
-        actions = ["sts:AssumeRole"]
+        actions = ["s3:PutObject"]
         resources = ["arn:aws:s3:::${var.artifact_bucket_name}/*"]
         principals {
             type        = "*"
