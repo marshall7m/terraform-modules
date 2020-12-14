@@ -10,16 +10,60 @@ data "aws_iam_policy_document" "trust" {
     }
 }
 
-data "aws_iam_policy_document" "cross_account_assume_role" {
+data "aws_iam_policy_document" "permission" {
     count = var.cross_account_assumable_roles != null ? 1 : 0
+    
     statement {
         effect = "Allow"
         actions = ["sts:AssumeRole"]
         resources = var.cross_account_assumable_roles
     }
+
+    statement {
+        sid = "LogsToCW"
+        effect = "Allow"
+        resources = [
+            "arn:aws:logs:us-west-2:501460770806:log-group:/aws/codebuild/${aws_codebuild_project.this.id}",
+            "arn:aws:logs:us-west-2:501460770806:log-group:/aws/codebuild/${aws_codebuild_project.this.id}:*"
+        ]
+        actions = [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+        ]
+    }
+
+    statement {
+        sid = "LogsToS3"
+        effect = "Allow"
+        resources = [
+            "arn:aws:s3:::${var.s3_log_bucket}",
+            "arn:aws:s3:::${var.s3_log_key}/*"
+        ]
+        actions = [
+            "s3:PutObject",
+            "s3:GetBucketAcl",
+            "s3:GetBucketLocation"
+        ]
+    }
+
+    statement {
+        effect = "Allow"
+        resources = [
+            "arn:aws:codebuild:us-west-2:501460770806:report-group/${aws_codebuild_project.this.id}-*"  
+        ]
+        actions = [
+            "codebuild:CreateReportGroup",
+            "codebuild:CreateReport",
+            "codebuild:UpdateReport",
+            "codebuild:BatchPutTestCases",
+            "codebuild:BatchPutCodeCoverages"
+        ]
+    }
+
 }
 
-resource "aws_iam_policy" "cross_account_assume_role" {
+resource "aws_iam_policy" "permission" {
     count = var.cross_account_assumable_roles != null ? 1 : 0
     name = var.name
     description = var.role_description
@@ -27,7 +71,7 @@ resource "aws_iam_policy" "cross_account_assume_role" {
     policy = data.aws_iam_policy_document.cross_account_assume_role[0].json
 }
 
-resource "aws_iam_role_policy_attachment" "cross_account_assume_role" {
+resource "aws_iam_role_policy_attachment" "permission" {
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.cross_account_assume_role[0].arn
 }

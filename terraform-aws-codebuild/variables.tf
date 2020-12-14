@@ -111,8 +111,14 @@ variable "build_image_pull_credentials_type" {
     default = "CODEBUILD"
 }
 
-variable "s3_log_path" {
-    description = "S3 path where the build project's logs will be stored"
+variable "s3_log_key" {
+    description = "Bucket path where the build project's logs will be stored (don't include bucket name)"
+    type = string
+    default = null
+}
+
+variable "s3_log_bucket" {
+    description = "Name of S3 bucket where the build project's logs will be stored"
     type = string
     default = null
 }
