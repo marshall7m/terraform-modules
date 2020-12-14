@@ -6,7 +6,7 @@ locals {
     #Arns of other aws accounts
     trusted_cross_account_arns = formatlist("arn:aws:iam::%s:root", distinct([for id in data.aws_arn.action_role_arns[*].account: id if id != var.account_id]))
     #List of distinct action providers used to configure pipeline policy
-    action_providers = distinct(var.stages[*].actions[*].provider)
+    action_providers = distinct(flatten(var.stages[*].actions[*].provider))
 }
 
 resource "aws_codepipeline" "this" {
