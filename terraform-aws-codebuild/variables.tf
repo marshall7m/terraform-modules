@@ -45,7 +45,7 @@ variable "role_tags" {
   default = {}
 }
 
-#### CODE-BUILD ####
+#### PROJECT ####
 
 # See for reference: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project
 
@@ -111,6 +111,12 @@ variable "build_image_pull_credentials_type" {
     description = "Build project's image credentials type"
     type = string
     default = "CODEBUILD"
+}
+
+variable "codepipeline_artifact_bucket_name" {
+    description = "Associated Codepipeline artifact bucket name"
+    type = string
+    default = null
 }
 
 variable "s3_log_key" {

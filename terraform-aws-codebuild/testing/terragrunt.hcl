@@ -7,21 +7,21 @@ terraform {
 }
 
 locals {
-  account_id = read_terragrunt_config(find_in_parent_folders("account.hcl"))
+  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl"))
+  account_id = local.account_vars.locals.account_id
 }
 
 
 inputs = {
     name = "tf-infrastructure"
-    resource_prefix = "demo-org"
-    resource_suffix = "us-west-2"
-    terraform_version = "0.13.5"
-    terragrunt_version = "0.25.4"
-    source_type = "CODEPIPELINE"
     cross_account_assumable_roles = ["arn:aws:iam::${local.account_id}:role/cross-account-tf-plan-access"]
     artifacts = {
         type = "CODEPIPELINE"
     }
-    buildspec = "test/buildspec.yml"
+    codepipeline_artifact_bucket_name = "test"
     common_tags = {"foo" = "bar"}
+    build_source = {
+      type = "CODEPIPELINE"
+      buildspec = "arn:aws:s3:::private-demo-org/buildspec.yml"
+    }
 }

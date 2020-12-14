@@ -48,6 +48,20 @@ data "aws_iam_policy_document" "permission" {
     }
 
     dynamic "statement" {
+        for_each = var.codepipeline_artifact_bucket_name != null ? [1] : []
+        content {
+            sid = "CodePipelineArtifactBucketAccess"
+            effect = "Allow"
+            resources = [
+                "arn:aws:s3:::${var.codepipeline_artifact_bucket_name}/*"
+            ]
+            actions = [
+                "s3:PutObject",
+                "s3:GetObject"
+            ]
+        }
+    }
+    dynamic "statement" {
         for_each = var.s3_log_key != null && var.s3_log_bucket != null ? [1] : []
         content {
             sid = "LogsToS3"
