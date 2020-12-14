@@ -5,7 +5,7 @@ resource "aws_codebuild_project" "this" {
   service_role  = coalesce(var.service_role_arn, aws_iam_role.this[0].arn)
 
   artifacts {
-    type = var.artifacts.type
+    type = try(var.artifacts.type, "NO_ARTIFACTS")
     artifact_identifier = try(var.artifacts.artifact_identifier, null)
     encryption_disabled = try(var.artifacts.encryption_disabled, null)
     override_artifact_name = try(var.artifacts.override_artifact_name, null)
@@ -49,7 +49,7 @@ resource "aws_codebuild_project" "this" {
   }
 
   source {
-    type            = var.build_source.type
+    type            = try(var.build_source.type, "NO_SOURCE")
     location        = try(var.build_source.location, null)
     git_clone_depth = try(var.build_source.git_clone_depth, null)
     insecure_ssl = try(var.build_source.insecure_ssl, null)

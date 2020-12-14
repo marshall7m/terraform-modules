@@ -68,6 +68,7 @@ variable "webhook_filter_groups" {
 variable "build_source" {
     description = "Source configuration that will be loaded into the CodeBuild project's buildspec"
     type = map
+    default = {}
 }
 
 variable "build_tags" {
@@ -79,6 +80,7 @@ variable "build_tags" {
 variable "artifacts" {
     description = "Build project's primary output artifacts configuration"
     type = map
+    default = {}
 }
 
 variable "secondary_artifacts" {

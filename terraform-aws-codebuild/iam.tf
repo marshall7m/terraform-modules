@@ -70,12 +70,12 @@ resource "aws_iam_policy" "permission" {
     name = var.name
     description = var.role_description
     path = var.role_path
-    policy = data.aws_iam_policy_document.cross_account_assume_role[0].json
+    policy = data.aws_iam_policy_document.permission[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "permission" {
   role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.cross_account_assume_role[0].arn
+  policy_arn = aws_iam_policy.permission[0].arn
 }
 
 resource "aws_iam_role" "this" {
