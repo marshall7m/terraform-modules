@@ -34,20 +34,6 @@ data "aws_iam_policy_document" "permission" {
     }
 
     statement {
-        sid = "LogsToS3"
-        effect = "Allow"
-        resources = [
-            "arn:aws:s3:::${var.s3_log_bucket}",
-            "arn:aws:s3:::${var.s3_log_key}/*"
-        ]
-        actions = [
-            "s3:PutObject",
-            "s3:GetBucketAcl",
-            "s3:GetBucketLocation"
-        ]
-    }
-
-    statement {
         effect = "Allow"
         resources = [
             "arn:aws:codebuild:us-west-2:501460770806:report-group/${aws_codebuild_project.this.id}-*"  
@@ -61,6 +47,22 @@ data "aws_iam_policy_document" "permission" {
         ]
     }
 
+    dynamic "statement" {
+        for_each = var.s3_log_key != null && var.s3_log_bucket != null ? [1] : []
+        content {
+            sid = "LogsToS3"
+            effect = "Allow"
+            resources = [
+                "arn:aws:s3:::${var.s3_log_bucket}",
+                "arn:aws:s3:::${var.s3_log_key}/*"
+            ]
+            actions = [
+                "s3:PutObject",
+                "s3:GetBucketAcl",
+                "s3:GetBucketLocation"
+            ]
+        }
+    }
 }
 
 resource "aws_iam_policy" "permission" {
