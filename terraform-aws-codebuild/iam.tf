@@ -23,8 +23,8 @@ data "aws_iam_policy_document" "permission" {
         sid = "LogsToCW"
         effect = "Allow"
         resources = [
-            "arn:aws:logs:us-west-2:501460770806:log-group:/aws/codebuild/${aws_codebuild_project.this.id}",
-            "arn:aws:logs:us-west-2:501460770806:log-group:/aws/codebuild/${aws_codebuild_project.this.id}:*"
+            "arn:aws:logs:us-west-2:501460770806:log-group:/aws/codebuild/${aws_codebuild_project.this.name}",
+            "arn:aws:logs:us-west-2:501460770806:log-group:/aws/codebuild/${aws_codebuild_project.this.name}:*"
         ]
         actions = [
             "logs:CreateLogGroup",
@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "permission" {
     statement {
         effect = "Allow"
         resources = [
-            "arn:aws:codebuild:us-west-2:501460770806:report-group/${aws_codebuild_project.this.id}-*"  
+            "arn:aws:codebuild:us-west-2:501460770806:report-group/${aws_codebuild_project.this.name}-*"  
         ]
         actions = [
             "codebuild:CreateReportGroup",
