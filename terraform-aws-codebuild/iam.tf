@@ -57,7 +57,11 @@ data "aws_iam_policy_document" "permission" {
             ]
             actions = [
                 "s3:PutObject",
-                "s3:GetObject"
+                "s3:GetObject",
+                "s3:ListObjects",
+                "s3:ListBucket",
+                "s3:GetBucketLocation",
+                "s3:GetObjectVersion"
             ]
         }
     }
