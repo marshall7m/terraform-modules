@@ -2,11 +2,17 @@
 
 locals {
     #service roles the pipeline can assume
-    assume_service_roles = distinct(compact([for action in var.stages[*].actions[*]: try(action.role_arn, "")]))
+    action_role_arns = distinct(compact([for action in flatten(var.stages[*].actions): try(action.role_arn, "")]))
     #Arns of other aws accounts
-    trusted_cross_account_arns = formatlist("arn:aws:iam::%s:root", distinct([for id in data.aws_arn.action_role_arns[*].account: id if id != var.account_id]))
+    # trusted_cross_account_arns = formatlist("arn:aws:iam::%s:root", distinct([for id in local.action_role_arns[*].account: id if id != var.account_id]))
+    trusted_cross_account_arns = distinct([for id in data.aws_arn.action_roles[*].account: id if id != var.account_id])
     #List of distinct action providers used to configure pipeline policy
     action_providers = distinct(flatten(var.stages[*].actions[*].provider))
+}
+
+data "aws_arn" "action_roles" {
+    count = length(local.action_role_arns)
+    arn = local.action_role_arns[count.index]
 }
 
 resource "aws_codepipeline" "this" {
@@ -55,11 +61,6 @@ resource "aws_codepipeline" "this" {
 
 #### IAM ####
 
-data "aws_arn" "action_role_arns" {
-    count = length(local.assume_service_roles)
-    arn = local.assume_service_roles[count.index]
-}
-
 data "aws_iam_policy_document" "permissions" {
     count = var.role_arn == null ? 1 : 0
 
@@ -74,11 +75,11 @@ data "aws_iam_policy_document" "permissions" {
     }
     
     dynamic "statement" {
-        for_each = length(data.aws_arn.action_role_arns) > 0 ? [1] : []
+        for_each = length(local.action_role_arns) > 0 ? [1] : []
         content {
             effect = "Allow"
             actions = ["sts:AssumeRole"]
-            resources = data.aws_arn.action_role_arns[*].arn
+            resources = local.action_role_arns
         }
     }
 

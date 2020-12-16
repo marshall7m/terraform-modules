@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "kms" {
         ]
         principals {
             type        = "AWS"
-            identifiers = concat([aws_iam_role.this[0].arn],local.trusted_cross_account_arns)
+            identifiers = concat([aws_iam_role.this[0].arn], local.action_role_arns)
         }
         resources = ["*"]
     }
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "kms" {
         ]
         principals {
             type        = "AWS"
-            identifiers = concat([aws_iam_role.this[0].arn],local.trusted_cross_account_arns)
+            identifiers = concat([aws_iam_role.this[0].arn], local.action_role_arns)
         }
         resources = ["*"]
 

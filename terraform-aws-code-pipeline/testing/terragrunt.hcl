@@ -12,11 +12,11 @@ terraform {
 }
 
 inputs = {
-    pipeline_name = "demo-org-infrastructure"
+    pipeline_name = "test-pipeline"
     account_id = local.account_id
-    kms_key_admin_arns = ["arn:aws:iam::${local.account_id}:user/learning-projects"]
+    kms_key_admin_arns = ["arn:aws:iam::${local.account_id}:user/test-user"]
     kms_alias = "test-pipeline"
-    create_artifact_bucket = true
+    create_artifact_bucket = false
     artifact_bucket_name = "private-demo-org-123-test"
     encrypt_artifacts = false
     stages = [
@@ -66,6 +66,7 @@ inputs = {
                     version          = "1"
                     input_artifacts = ["source_output_two"]
                     output_artifacts = ["dev-tf-validate_output"]
+                    role_arn = "arn:aws:iam::${local.account_id}:role/test-role"
                     configuration = {
                         ProjectName = "tf-build"
                         EnvironmentVariables = tostring(jsonencode([

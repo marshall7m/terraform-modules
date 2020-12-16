@@ -71,7 +71,7 @@ variable "role_max_session_duration" {
 }
 
 variable "role_description" {
-  default = "Allows CodePipeline service to assume cross-account service roles"
+  default = "Allows Amazon Codepipeline to call AWS services on your behalf"
 }
 
 variable "role_force_detach_policies" {
