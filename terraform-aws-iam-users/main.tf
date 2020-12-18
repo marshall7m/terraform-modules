@@ -15,5 +15,5 @@ module "aws_users" {
   ssh_key_encoding              = try(each.value.ssh_key_encoding, "SSH")
   ssh_public_key                = try(each.value.ssh_public_key, "")
   permissions_boundary          = try(each.value.permissions_boundary, "")
-  tags                          = try(each.value.tags, {})
+  tags                          = merge(try(each.value.tags, {}), var.common_tags)
 }
