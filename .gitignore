@@ -1,3 +1,4 @@
+account.hcl
 .terraform
 .terragrunt-cache
 .DS_Store
