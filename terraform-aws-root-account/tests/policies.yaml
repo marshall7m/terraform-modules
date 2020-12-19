@@ -1,0 +1,14 @@
+tags: 
+  costcenter: 
+    tag_key: 
+        "@@assign": CostCenter
+    tag_value: 
+        "@@assign": 
+          - 100
+          - 200    
+    enforced_for: 
+        "@@assign": 
+          - secretsmanager:*
+      
+  
+
