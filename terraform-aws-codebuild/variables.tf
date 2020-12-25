@@ -6,6 +6,18 @@ variable "common_tags" {
 
 #### IAM-ROLE ####
 
+variable "region" {
+    description = "AWS region where the Codebuild project should reside"
+    type = string
+    default = null
+}
+
+variable "account_id" {
+    description = "The AWS account that the CodeBuild project will be created in"
+    type = number
+    default = null
+}
+
 variable "cross_account_assumable_roles" {
     description = "Cross-account role ARNs that the CodeBuild project can assume"
     type = list(string)
@@ -115,6 +127,12 @@ variable "build_image_pull_credentials_type" {
 
 variable "codepipeline_artifact_bucket_name" {
     description = "Associated Codepipeline artifact bucket name"
+    type = string
+    default = null
+}
+
+variable "codepipeline_arn" {
+    description = "Associated Codepipeline ARN"
     type = string
     default = null
 }

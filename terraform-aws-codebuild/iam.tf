@@ -1,3 +1,12 @@
+locals {
+    account_id = coalesce(var.account_id, data.aws_caller_identity.current.id)
+    region = coalesce(var.region, data.aws_region.current.name)
+}
+
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+
 data "aws_iam_policy_document" "trust" {
     count = var.cross_account_assumable_roles != null ? 1 : 0
     statement {
@@ -23,8 +32,8 @@ data "aws_iam_policy_document" "permission" {
         sid = "LogsToCW"
         effect = "Allow"
         resources = [
-            "arn:aws:logs:us-west-2:501460770806:log-group:/aws/codebuild/${aws_codebuild_project.this.name}",
-            "arn:aws:logs:us-west-2:501460770806:log-group:/aws/codebuild/${aws_codebuild_project.this.name}:*"
+            "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/codebuild/${aws_codebuild_project.this.name}",
+            "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/codebuild/${aws_codebuild_project.this.name}:*"
         ]
         actions = [
             "logs:CreateLogGroup",
@@ -36,7 +45,7 @@ data "aws_iam_policy_document" "permission" {
     statement {
         effect = "Allow"
         resources = [
-            "arn:aws:codebuild:us-west-2:501460770806:report-group/${aws_codebuild_project.this.name}-*"  
+            "arn:aws:codebuild:${local.region}:${local.account_id}:report-group/${aws_codebuild_project.this.name}-*"  
         ]
         actions = [
             "codebuild:CreateReportGroup",
@@ -44,6 +53,17 @@ data "aws_iam_policy_document" "permission" {
             "codebuild:UpdateReport",
             "codebuild:BatchPutTestCases",
             "codebuild:BatchPutCodeCoverages"
+        ]
+    }
+
+    statement {
+        effect = "Allow"
+        resources = [
+            "arn:aws:codebuild:${local.region}:${local.account_id}:project/${aws_codebuild_project.this.name}"  
+        ]
+        actions = [
+            "codebuild:StartBuild",
+            "codebuild:batchGetBuilds"
         ]
     }
 
@@ -59,12 +79,15 @@ data "aws_iam_policy_document" "permission" {
                 "s3:PutObject",
                 "s3:GetObject",
                 "s3:ListObjects",
+                "s3:GetObjectVersion",
                 "s3:ListBucket",
                 "s3:GetBucketLocation",
-                "s3:GetObjectVersion"
+                "s3:GetBucketAcl"
             ]
         }
     }
+
+        
     dynamic "statement" {
         for_each = var.s3_log_key != null && var.s3_log_bucket != null ? [1] : []
         content {

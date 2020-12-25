@@ -186,7 +186,7 @@ data "aws_iam_policy_document" "assume_tf_plan_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "AWS"
+      type        = "Service"
       identifiers = var.tf_plan_role_cross_account_arns
     }
 
@@ -209,7 +209,7 @@ data "aws_iam_policy_document" "assume_tf_apply_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "AWS"
+      type        = "Service"
       identifiers = var.tf_apply_role_cross_account_arns
     }
 
@@ -255,7 +255,7 @@ data "aws_iam_policy_document" "assume_cd_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "AWS"
+      type        = "Service"
       identifiers = var.cd_role_cross_account_arns
     }
 
