@@ -1,5 +1,5 @@
 resource "aws_iam_role" "admin" {
-  count                = length(var.admin_role_cross_account_arns) > 0 ? 1 : 0
+  count                = length(var.admin_role_cross_account_ids) > 0 ? 1 : 0
   name                 = var.admin_role_name
   path                 = var.admin_role_path
   max_session_duration = var.admin_role_max_session_duration
@@ -14,7 +14,7 @@ resource "aws_iam_role" "admin" {
 }
 
 resource "aws_iam_role" "dev" {
-  count                = length(var.dev_role_cross_account_arns) > 0 ? 1 : 0
+  count                = length(var.dev_role_cross_account_ids) > 0 ? 1 : 0
   name                 = var.dev_role_name
   path                 = var.dev_role_path
   max_session_duration = var.dev_role_max_session_duration
@@ -29,7 +29,7 @@ resource "aws_iam_role" "dev" {
 }
 
 resource "aws_iam_role" "read" {
-  count                = length(var.read_role_cross_account_arns) > 0 ? 1 : 0
+  count                = length(var.read_role_cross_account_ids) > 0 ? 1 : 0
   name                 = var.read_role_name
   path                 = var.read_role_path
   max_session_duration = var.read_role_max_session_duration
@@ -44,7 +44,7 @@ resource "aws_iam_role" "read" {
 }
 
 resource "aws_iam_role" "tf_plan" {
-  count                = length(var.tf_plan_role_cross_account_arns) > 0 ? 1 : 0
+  count                = length(var.tf_plan_role_cross_account_ids) > 0 ? 1 : 0
   name                 = var.tf_plan_role_name
   path                 = var.tf_plan_role_path
   max_session_duration = var.tf_plan_role_max_session_duration
@@ -59,7 +59,7 @@ resource "aws_iam_role" "tf_plan" {
 }
 
 resource "aws_iam_role" "tf_apply" {
-  count                = length(var.tf_apply_role_cross_account_arns) > 0 ? 1 : 0
+  count                = length(var.tf_apply_role_cross_account_ids) > 0 ? 1 : 0
   name                 = var.tf_apply_role_name
   path                 = var.tf_apply_role_path
   max_session_duration = var.tf_apply_role_max_session_duration
@@ -74,7 +74,7 @@ resource "aws_iam_role" "tf_apply" {
 }
 
 resource "aws_iam_role" "limited_s3_read" {
-  count                = length(var.limited_s3_read_role_cross_account_arns) > 0 ? 1 : 0
+  count                = length(var.limited_s3_read_role_cross_account_ids) > 0 ? 1 : 0
   name                 = var.limited_s3_read_role_name
   path                 = var.limited_s3_read_role_path
   max_session_duration = var.limited_s3_read_role_max_session_duration
@@ -89,7 +89,7 @@ resource "aws_iam_role" "limited_s3_read" {
 }
 
 resource "aws_iam_role" "cd" {
-  count                = length(var.cd_role_cross_account_arns) > 0 ? 1 : 0
+  count                = length(var.cd_role_cross_account_ids) > 0 ? 1 : 0
   name                 = var.cd_role_name
   path                 = var.cd_role_path
   max_session_duration = var.cd_role_max_session_duration

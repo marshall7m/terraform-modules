@@ -1,8 +1,8 @@
 #### ADMIN - ROLE ####
-variable "admin_role_cross_account_arns" {
-  description = "List of ARNs allowed to assume the role"
-  type        = list(string)
-  default     = []
+variable "admin_role_cross_account_ids" {
+  description = "List of AWS cross-account IDs that can assumed this role"
+  type = list(string)
+  default = []
 }
 
 variable "admin_role_name" {
@@ -121,10 +121,10 @@ variable "custom_admin_role_policy_arns" {
 
 #### DEV - ROLE ####
 
-variable "dev_role_cross_account_arns" {
-  description = "List of ARNs allowed to assume the role"
-  type        = list(string)
-  default     = []
+variable "dev_role_cross_account_ids" {
+  description = "List of AWS cross-account IDs that can assumed this role"
+  type = list(string)
+  default = []
 }
 
 variable "dev_role_name" {
@@ -243,10 +243,10 @@ variable "custom_dev_role_policy_arns" {
 
 #### READ - ROLE ####
 
-variable "read_role_cross_account_arns" {
-  description = "List of ARNs allowed to assume the role"
-  type        = list(string)
-  default     = []
+variable "read_role_cross_account_ids" {
+  description = "List of AWS cross-account IDs that can assumed this role"
+  type = list(string)
+  default = []
 }
 
 variable "read_role_name" {
@@ -365,10 +365,10 @@ variable "custom_read_role_policy_arns" {
 
 #### LIMITED-S3-READ-ROLE ####
 
-variable "limited_s3_read_role_cross_account_arns" {
-  description = "List of ARNs allowed to assume the role"
-  type        = list(string)
-  default     = []
+variable "limited_s3_read_role_cross_account_ids" {
+  description = "List of AWS cross-account IDs that can assumed this role"
+  type = list(string)
+  default = []
 }
 
 variable "limited_s3_read_role_name" {
@@ -487,10 +487,10 @@ variable "limited_s3_read_role_mfa_age" {
 
 #### TF_PLAN - ROLE ####
 
-variable "tf_plan_role_cross_account_arns" {
-  description = "List of ARNs allowed to assume the role"
-  type        = list(string)
-  default     = []
+variable "tf_plan_role_cross_account_ids" {
+  description = "List of AWS cross-account IDs that can assumed this role"
+  type = list(string)
+  default = []
 }
 
 variable "tf_plan_role_name" {
@@ -597,15 +597,15 @@ variable "custom_tf_plan_role_policy_arns" {
 
 #### TF-APPLY-ROLE ####
 
-variable "tf_apply_role_cross_account_arns" {
-  description = "List of ARNs allowed to assume the role"
-  type        = list(string)
-  default     = []
-}
-
 variable "tf_apply_role_name" {
   description = "Role name"
   default     = "cross-account-tf-apply-access"
+}
+
+variable "tf_apply_role_cross_account_ids" {
+  description = "List of AWS cross-account IDs that can assumed this role"
+  type = list(string)
+  default = []
 }
 
 variable "tf_apply_role_path" {
@@ -707,10 +707,10 @@ variable "custom_tf_apply_role_policy_arns" {
 
 #### CD-ROLE ####
 
-variable "cd_role_cross_account_arns" {
-  description = "List of ARNs allowed to assume the role"
-  type        = list(string)
-  default     = []
+variable "cd_role_cross_account_ids" {
+  description = "List of AWS cross-account IDs that can assumed this role"
+  type = list(string)
+  default = []
 }
 
 variable "cd_role_name" {

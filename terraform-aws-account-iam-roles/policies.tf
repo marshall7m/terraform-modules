@@ -44,7 +44,7 @@ resource "aws_iam_role_policy_attachment" "admin_permissions" {
 }
 
 resource "aws_iam_role_policy_attachment" "custom_admin_permissions" {
-  count = length(var.admin_role_cross_account_arns) > 0 && length(var.custom_admin_role_policy_arns) > 0 ? length(var.custom_admin_role_policy_arns) : 0
+  count = length(var.admin_role_cross_account_ids) > 0 && length(var.custom_admin_role_policy_arns) > 0 ? length(var.custom_admin_role_policy_arns) : 0
 
   role       = aws_iam_role.admin[0].name
   policy_arn = element(var.custom_admin_role_policy_arns, count.index)
@@ -96,7 +96,7 @@ resource "aws_iam_role_policy_attachment" "dev_permissions" {
 }
 
 resource "aws_iam_role_policy_attachment" "custom_dev_permissions" {
-  count = length(var.dev_role_cross_account_arns) > 0 && length(var.custom_dev_role_policy_arns) > 0 ? length(var.custom_dev_role_policy_arns) : 0
+  count = length(var.dev_role_cross_account_ids) > 0 && length(var.custom_dev_role_policy_arns) > 0 ? length(var.custom_dev_role_policy_arns) : 0
 
   role       = aws_iam_role.dev[0].name
   policy_arn = element(var.custom_dev_role_policy_arns, count.index)
@@ -149,7 +149,7 @@ resource "aws_iam_role_policy_attachment" "read_permissions" {
 }
 
 resource "aws_iam_role_policy_attachment" "custom_read_permissions" {
-  count = length(var.read_role_cross_account_arns) > 0 && length(var.custom_read_role_policy_arns) > 0 ? length(var.custom_read_role_policy_arns) : 0
+  count = length(var.read_role_cross_account_ids) > 0 && length(var.custom_read_role_policy_arns) > 0 ? length(var.custom_read_role_policy_arns) : 0
 
   role       = aws_iam_role.read[0].name
   policy_arn = element(var.custom_read_role_policy_arns, count.index)
@@ -202,7 +202,7 @@ resource "aws_iam_role_policy_attachment" "tf_plan_permissions" {
 }
 
 resource "aws_iam_role_policy_attachment" "custom_tf_plan_permissions" {
-  count = length(var.tf_plan_role_cross_account_arns) > 0 && length(var.custom_tf_plan_role_policy_arns) > 0 ? length(var.custom_tf_plan_role_policy_arns) : 0
+  count = length(var.tf_plan_role_cross_account_ids) > 0 && length(var.custom_tf_plan_role_policy_arns) > 0 ? length(var.custom_tf_plan_role_policy_arns) : 0
 
   role       = aws_iam_role.tf_plan[0].name
   policy_arn = element(var.custom_tf_plan_role_policy_arns, count.index)
@@ -255,7 +255,7 @@ resource "aws_iam_role_policy_attachment" "tf_apply_permissions" {
 }
 
 resource "aws_iam_role_policy_attachment" "custom_tf_apply_permissions" {
-  count = length(var.tf_apply_role_cross_account_arns) > 0 && length(var.custom_tf_apply_role_policy_arns) > 0 ? length(var.custom_tf_apply_role_policy_arns) : 0
+  count = length(var.tf_apply_role_cross_account_ids) > 0 && length(var.custom_tf_apply_role_policy_arns) > 0 ? length(var.custom_tf_apply_role_policy_arns) : 0
 
   role       = aws_iam_role.tf_apply[0].name
   policy_arn = element(var.custom_tf_apply_role_policy_arns, count.index)
@@ -309,7 +309,7 @@ resource "aws_iam_role_policy_attachment" "limited_s3_read_permissions" {
 }
 
 resource "aws_iam_role_policy_attachment" "custom_limited_s3_read_permissions" {
-  count = length(var.limited_s3_read_role_cross_account_arns) > 0 && length(var.custom_limited_s3_read_role_policy_arns) > 0 ? length(var.custom_limited_s3_read_role_policy_arns) : 0
+  count = length(var.limited_s3_read_role_cross_account_ids) > 0 && length(var.custom_limited_s3_read_role_policy_arns) > 0 ? length(var.custom_limited_s3_read_role_policy_arns) : 0
 
   role       = aws_iam_role.limited_s3_read[0].name
   policy_arn = element(var.custom_limited_s3_read_role_policy_arns, count.index)
