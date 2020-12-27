@@ -185,7 +185,7 @@ data "aws_iam_policy_document" "assume_tf_plan_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "Service"
+      type        = "AWS"
       identifiers = formatlist("arn:aws:iam::%s:root", var.tf_plan_role_cross_account_ids)
     }
 
@@ -254,7 +254,7 @@ data "aws_iam_policy_document" "assume_cd_role" {
     actions = ["sts:AssumeRole"]
 
     principals {
-      type        = "Service"
+      type        = "AWS"
       identifiers = formatlist("arn:aws:iam::%s:root", var.cd_role_cross_account_ids)
     }
 

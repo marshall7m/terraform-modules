@@ -181,7 +181,6 @@ data "aws_iam_policy_document" "tf_plan_permissions" {
           values   = condition.value.values
         }
       }
-
     }
   }
 }

@@ -35,8 +35,8 @@ inputs = {
   ]
   tf_apply_allowed_resources = ["*"]
 
-  auto_deploy_role_cross_account_ids = [local.account_id]
-  auto_deploy_statements = [
+  cd_role_cross_account_ids = [local.account_id]
+  cd_statements = [
     {
       effect = "Allow"
       resources = ["*"]
