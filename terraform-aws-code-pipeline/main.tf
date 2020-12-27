@@ -73,6 +73,34 @@ data "aws_iam_policy_document" "permissions" {
         ]
         resources = ["arn:aws:s3:::${var.artifact_bucket_name}/*"]
     }
+    
+    dynamic "statement" {
+        for_each = length(local.action_role_arns) > 0 ? [1] : []
+        content {
+            effect = "Allow"
+            actions = ["sts:AssumeRole"]
+            resources = local.action_role_arns
+        }
+    }
+    # TODO: See if needed for Codebuild
+    # dynamic "statement" {
+    #     for_each = length(local.action_role_arns) > 0 ? [1] : []
+    #     content {
+    #         effect = "Allow"
+    #         actions = ["iam:PassRole"]
+    #         resources = ["*"]
+    #         condition {
+    #             test = "StringEqualsIfExists"
+    #             variable = "iam:PassedToService"
+    #             values = [
+    #                 "cloudformation.amazonaws.com",
+    #                 "elasticbeanstalk.amazonaws.com",
+    #                 "ec2.amazonaws.com",
+    #                 "ecs-tasks.amazonaws.com"
+    #             ]
+    #         }
+    #     }
+    # }
 
     dynamic "statement" {
         for_each = contains(local.action_providers, "CodeStarSourceConnection") ? [1] : []
