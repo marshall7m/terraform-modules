@@ -67,6 +67,18 @@ variable "name" {
     default = null
 }
 
+variable "description" {
+    description = "Build description"
+    type = string
+    default = null
+}
+
+variable "build_timeout" {
+    description = "Minutes till build run is timed out"
+    type = string
+    default = null
+}
+
 variable "webhook_filter_groups" {
     description = "Webhook filter groups to apply to the build. (only used when var.builds is null)"
     type = list(list(object({
@@ -167,8 +179,8 @@ variable "cw_stream_name" {
     default = null
 }
 
-variable "service_role_arn" {
-    description = "Build project service role"
+variable "role_arn" {
+    description = "Existing IAM role ARN to attach to CodeBuild project"
     type = string
     default = null
 }

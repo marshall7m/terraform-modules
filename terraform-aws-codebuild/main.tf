@@ -1,8 +1,8 @@
 resource "aws_codebuild_project" "this" {
   name          = var.name
-  description   = "Terraform managed codebuild project"
-  build_timeout = "5"
-  service_role  = coalesce(var.service_role_arn, aws_iam_role.this[0].arn)
+  description   = var.description
+  build_timeout = var.build_timeout
+  service_role  = var.role_arn != null ? var.role_arn : try(aws_iam_role.this[0].arn, null)
 
   artifacts {
     type = try(var.artifacts.type, "NO_ARTIFACTS")

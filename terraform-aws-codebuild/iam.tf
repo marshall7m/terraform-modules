@@ -8,7 +8,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 data "aws_iam_policy_document" "trust" {
-    count = var.cross_account_assumable_roles != null ? 1 : 0
+    count = var.role_arn == null ? 1 : 0
     statement {
         effect = "Allow"
         actions = ["sts:AssumeRole"]
@@ -20,14 +20,7 @@ data "aws_iam_policy_document" "trust" {
 }
 
 data "aws_iam_policy_document" "permission" {
-    count = var.cross_account_assumable_roles != null ? 1 : 0
-    
-    statement {
-        effect = "Allow"
-        actions = ["sts:AssumeRole"]
-        resources = var.cross_account_assumable_roles
-    }
-
+    count = var.role_arn == null ? 1 : 0
     statement {
         sid = "LogsToCW"
         effect = "Allow"
@@ -65,6 +58,15 @@ data "aws_iam_policy_document" "permission" {
             "codebuild:StartBuild",
             "codebuild:batchGetBuilds"
         ]
+    }
+
+    dynamic "statement" {
+        for_each = var.cross_account_assumable_roles != [] ? [1] : []
+        content {
+            effect = "Allow"
+            actions = ["sts:AssumeRole"]
+            resources = var.cross_account_assumable_roles
+        }
     }
 
     dynamic "statement" {
@@ -107,7 +109,7 @@ data "aws_iam_policy_document" "permission" {
 }
 
 resource "aws_iam_policy" "permission" {
-    count = var.cross_account_assumable_roles != null ? 1 : 0
+    count = var.role_arn == null ? 1 : 0
     name = var.name
     description = var.role_description
     path = var.role_path
@@ -115,12 +117,13 @@ resource "aws_iam_policy" "permission" {
 }
 
 resource "aws_iam_role_policy_attachment" "permission" {
+  count = var.role_arn == null ? 1 : 0
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.permission[0].arn
 }
 
 resource "aws_iam_role" "this" {
-    count = var.cross_account_assumable_roles != null ? 1 : 0
+    count = var.role_arn == null ? 1 : 0
     name = var.name
     path                 = var.role_path
     max_session_duration = var.role_max_session_duration

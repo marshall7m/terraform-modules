@@ -7,5 +7,5 @@ output "build_name" {
 }
 
 output "role_arn" {
-    value = aws_iam_role.this[0].arn
-} 
+    value = try(aws_iam_role.this[0].arn, null)
+}
