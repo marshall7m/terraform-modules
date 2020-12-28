@@ -1,12 +1,15 @@
 # Feature: Create stage & action preset/template blocks?
 
 locals {
-    #service roles the pipeline can assume
+    # Codepipeline action role ARNs
     action_role_arns = distinct(compact([for action in flatten(var.stages[*].actions): try(action.role_arn, "")]))
-    #Arns of other aws accounts
-    # trusted_cross_account_arns = formatlist("arn:aws:iam::%s:root", distinct([for id in local.action_role_arns[*].account: id if id != var.account_id]))
-    trusted_cross_account_arns = distinct([for id in data.aws_arn.action_roles[*].account: id if id != var.account_id])
-    #List of distinct action providers used to configure pipeline policy
+    # Cross-account AWS account_ids
+    trusted_cross_account_ids = distinct([for id in data.aws_arn.action_roles[*].account: id if id != var.account_id])
+    # Cross-account AWS account ARNs used for S3 artifact bucket policy
+    trusted_cross_account_arns = formatlist("arn:aws:iam::%s:root", local.trusted_cross_account_ids)
+    # Cross-account AWS role resources used for CodePipeline IAM permissions
+    trusted_cross_account_roles = formatlist("arn:aws:iam::%s:role/*", local.trusted_cross_account_ids)
+    # Distinct CodePipeline action providers used for CodePipeline IAM permissions
     action_providers = distinct(flatten(var.stages[*].actions[*].provider))
 }
 
@@ -73,34 +76,31 @@ data "aws_iam_policy_document" "permissions" {
         ]
         resources = ["arn:aws:s3:::${var.artifact_bucket_name}/*"]
     }
+
+    statement {
+        effect = "Allow"
+        actions = ["iam:PassRole"]
+        resources = ["*"]
+        condition {
+            test = "StringEqualsIfExists"
+            variable = "iam:PassedToService"
+            values = [
+                "cloudformation.amazonaws.com",
+                "elasticbeanstalk.amazonaws.com",
+                "ec2.amazonaws.com",
+                "ecs-tasks.amazonaws.com"
+            ]
+        }
+    }
     
     dynamic "statement" {
-        for_each = length(local.action_role_arns) > 0 ? [1] : []
+        for_each = length(local.trusted_cross_account_roles) > 0 ? [1] : []
         content {
             effect = "Allow"
             actions = ["sts:AssumeRole"]
-            resources = local.action_role_arns
+            resources = local.trusted_cross_account_roles
         }
     }
-    # TODO: See if needed for Codebuild
-    # dynamic "statement" {
-    #     for_each = length(local.action_role_arns) > 0 ? [1] : []
-    #     content {
-    #         effect = "Allow"
-    #         actions = ["iam:PassRole"]
-    #         resources = ["*"]
-    #         condition {
-    #             test = "StringEqualsIfExists"
-    #             variable = "iam:PassedToService"
-    #             values = [
-    #                 "cloudformation.amazonaws.com",
-    #                 "elasticbeanstalk.amazonaws.com",
-    #                 "ec2.amazonaws.com",
-    #                 "ecs-tasks.amazonaws.com"
-    #             ]
-    #         }
-    #     }
-    # }
 
     dynamic "statement" {
         for_each = contains(local.action_providers, "CodeStarSourceConnection") ? [1] : []
