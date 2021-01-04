@@ -1,20 +1,18 @@
 resource "aws_s3_bucket" "this" {
   count         = var.create_artifact_bucket ? 1 : 0
-  bucket        = var.artifact_bucket_name
+  bucket        = local.artifact_bucket_name
   acl           = "private"
   force_destroy = var.artifact_bucket_force_destroy
   tags          = merge(var.arifact_bucket_tags, var.common_tags)
 }
 
-#### IAM ####
-
 data "aws_iam_policy_document" "s3" {
-    count = var.create_artifact_bucket ? 1 : 0
+    count = var.create_artifact_bucket && length(local.trusted_cross_account_ids) > 0 ? 1 : 0
     statement {
         sid = "DenyUnEncryptedObjectUploads"
         effect = "Deny"
         actions = ["s3:PutObject"]
-        resources = ["arn:aws:s3:::${var.artifact_bucket_name}/*"]
+        resources = ["arn:aws:s3:::${local.artifact_bucket_name}/*"]
         principals {
             type        = "*"
             identifiers = ["*"]
@@ -30,7 +28,7 @@ data "aws_iam_policy_document" "s3" {
         sid = "DenyInsecureConnections"
         effect = "Deny"
         actions = ["s3:*"]
-        resources = ["arn:aws:s3:::${var.artifact_bucket_name}/*"]
+        resources = ["arn:aws:s3:::${local.artifact_bucket_name}/*"]
         principals {
             type        = "*"
             identifiers = ["*"]
@@ -49,7 +47,7 @@ data "aws_iam_policy_document" "s3" {
             "s3:Get*",
             "s3:Put*"
         ]
-        resources = ["arn:aws:s3:::${var.artifact_bucket_name}/*"]
+        resources = ["arn:aws:s3:::${local.artifact_bucket_name}/*"]
         principals {
             type        = "AWS"
             identifiers = local.trusted_cross_account_arns
@@ -60,7 +58,7 @@ data "aws_iam_policy_document" "s3" {
         sid = "AllowCrossAccountS3ListBucket"
         effect = "Allow"
         actions = ["s3:ListBucket"]
-        resources = ["arn:aws:s3:::${var.artifact_bucket_name}"]
+        resources = ["arn:aws:s3:::${local.artifact_bucket_name}"]
         principals {
             type        = "AWS"
             identifiers = local.trusted_cross_account_arns
@@ -69,7 +67,7 @@ data "aws_iam_policy_document" "s3" {
 }
 
 resource "aws_s3_bucket_policy" "this" {
-    count = var.create_artifact_bucket ? 1 : 0
-    bucket = var.artifact_bucket_name
+    count = var.create_artifact_bucket && length(local.trusted_cross_account_ids) > 0 ? 1 : 0
+    bucket = local.artifact_bucket_name
     policy = data.aws_iam_policy_document.s3[0].json   
 }

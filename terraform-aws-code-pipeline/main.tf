@@ -11,6 +11,8 @@ locals {
     trusted_cross_account_roles = formatlist("arn:aws:iam::%s:role/*", local.trusted_cross_account_ids)
     # Distinct CodePipeline action providers used for CodePipeline IAM permissions
     action_providers = distinct(flatten(var.stages[*].actions[*].provider))
+
+    artifact_bucket_name = coalesce(var.artifact_bucket_name, var.pipeline_name)
 }
 
 data "aws_arn" "action_roles" {
@@ -23,13 +25,13 @@ resource "aws_codepipeline" "this" {
   role_arn = coalesce(var.role_arn, aws_iam_role.this[0].arn)
 
   artifact_store {
-    location = var.artifact_bucket_name
+    location = local.artifact_bucket_name
     type     = "S3"
 
     dynamic "encryption_key" {
-      for_each = var.kms_key_arn != null || var.encrypt_artifacts == true ? [1] : []
+      for_each = var.kms_key_arn != null ? [1] : []
       content {
-        id   = coalesce(var.kms_key_arn, try(aws_kms_key.this[0].arn), null)
+        id   = var.kms_key_arn
         type = "KMS"
       }
     }
@@ -74,7 +76,7 @@ data "aws_iam_policy_document" "permissions" {
             "s3:Get*",
             "s3:Put*"
         ]
-        resources = ["arn:aws:s3:::${var.artifact_bucket_name}/*"]
+        resources = ["arn:aws:s3:::${local.artifact_bucket_name}/*"]
     }
 
     statement {
