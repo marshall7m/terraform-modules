@@ -1,0 +1,101 @@
+name: ${order}-${name}
+actions:
+  - name: validate
+    category: Test
+    owner: AWS
+    provider: CodeBuild
+    version: 1
+    input_artifacts: 
+      - ${branch}
+    output_artifacts:
+      - ${name}-testing-output
+    configuration:
+      ProjectName: ${build_name}
+      EnvironmentVariables: >-
+        [ 
+          {
+            name  = "CI_ROLE_ARN"
+            value = "arn:aws:iam::${id}:role/${apply_role_name}"
+            type  = "PLAINTEXT"
+          },
+          {
+            "name": "PATHS",
+            "value": "${paths}",
+            "type": "PLAINTEXT"
+          },
+          {
+            "name": "COMMANDS",
+            "value": "${apply_command}",
+            "type": "PLAINTEXT"
+          }
+        ]
+    run_order: 1
+
+  - name: plan
+    category: Test
+    owner: AWS
+    provider: CodeBuild
+    version: 1
+    input_artifacts: 
+      - ${branch}
+    output_artifacts:
+      - ${name}-plan-output
+    configuration:
+      ProjectName: ${build_name}
+      EnvironmentVariables: >-
+        [ 
+          {
+            name  = "CI_ROLE_ARN"
+            value = "arn:aws:iam::${id}:role/${apply_role_name}"
+            type  = "PLAINTEXT"
+          },
+          {
+            "name": "PATHS",
+            "value": "${paths}",
+            "type": "PLAINTEXT"
+          },
+          {
+            "name": "COMMANDS",
+            "value": "${apply_command}",
+            "type": "PLAINTEXT"
+          }
+        ]
+    run_order: 2
+
+  - name: manual-approval
+    category: Approval
+    owner: AWS
+    provider: Manual
+    version: 1
+    run_order: 3
+
+  - name: apply
+    category: Build
+    owner: AWS
+    provider: CodeBuild
+    version: 1
+    input_artifacts: 
+      - ${branch}
+    output_artifacts:
+      - ${name}-apply-output
+    configuration:
+      ProjectName: ${build_name}
+      EnvironmentVariables: >-
+        [ 
+          {
+            name  = "CI_ROLE_ARN"
+            value = "arn:aws:iam::${id}:role/${apply_role_name}"
+            type  = "PLAINTEXT"
+          },
+          {
+            "name": "PATHS",
+            "value": "${paths}",
+            "type": "PLAINTEXT"
+          },
+          {
+            "name": "COMMANDS",
+            "value": "${apply_command}",
+            "type": "PLAINTEXT"
+          }
+        ]
+    run_order: 4
