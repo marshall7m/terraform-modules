@@ -12,7 +12,7 @@ terraform {
 }
 
 inputs = {
-    pipeline_name = "test-pipeline"
+    name = "test-pipeline"
     account_id = local.account_id
     artifact_bucket_name = "private-demo-org-123-test"
     stages = [

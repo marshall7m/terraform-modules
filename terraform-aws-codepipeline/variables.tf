@@ -1,5 +1,5 @@
 variable "account_id" {
-  description = "AWS account id"
+  description = "AWS account id used to create pipeline"
   type = number
 }
 
@@ -21,6 +21,12 @@ variable "role_arn" {
   default = null
 }
 
+variable "cmk_arn" {
+  description = "AWS KMS CMK (Customer Master Key) ARN used to encrypt Codepipeline artifacts"
+  type = string
+  default = null
+}
+
 variable "artifact_bucket_name" {
   description = "AWS S3 bucket name used for storing Codepipeline artifacts"
   type = string
@@ -37,7 +43,7 @@ variable "stages" {
   type = any
 }
 
-variable "tags" {
+variable "pipeline_tags" {
   description = "Tags to attach to the CodePipeline"
   type = map(string)
   default = {}
@@ -74,7 +80,7 @@ variable "role_permissions_boundary" {
 }
 
 variable "role_tags" {
-  description = "Tags to add to CodePipeline service role"
+  description = "Tags to add to CodePipeline role"
   type = map(string)
   default = {}
 }

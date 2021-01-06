@@ -27,9 +27,9 @@ resource "aws_codepipeline" "this" {
     type     = "S3"
 
     dynamic "encryption_key" {
-      for_each = var.kms_key_arn != null ? [1] : []
+      for_each = var.cmk_arn != null ? [1] : []
       content {
-        id   = var.kms_key_arn
+        id   = var.cmk_arn
         type = "KMS"
       }
     }
