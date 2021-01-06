@@ -1,6 +1,7 @@
 locals {
     account_id = coalesce(var.account_id, data.aws_caller_identity.current.id)
     region = coalesce(var.region, data.aws_region.current.name)
+    environment_variables = [for env_var in var.environment_variables: defaults(env_var, {type = "PLAINTEXT"})]
 }
 
 data "aws_caller_identity" "current" {}
@@ -21,19 +22,6 @@ data "aws_iam_policy_document" "trust" {
 
 data "aws_iam_policy_document" "permission" {
     count = var.role_arn == null ? 1 : 0
-    statement {
-        sid = "LogsToCW"
-        effect = "Allow"
-        resources = [
-            "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/codebuild/${aws_codebuild_project.this.name}",
-            "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/codebuild/${aws_codebuild_project.this.name}:*"
-        ]
-        actions = [
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
-        ]
-    }
 
     statement {
         effect = "Allow"
@@ -61,6 +49,40 @@ data "aws_iam_policy_document" "permission" {
     }
 
     dynamic "statement" {
+        for_each = var.cw_logs ? [1] : []
+        content {
+            sid = "LogsToCW"
+            effect = "Allow"
+            resources = [
+                "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/codebuild/${aws_codebuild_project.this.name}",
+                "arn:aws:logs:${local.region}:${local.account_id}:log-group:/aws/codebuild/${aws_codebuild_project.this.name}:*"
+            ]
+            actions = [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ]
+        }
+    }
+
+    dynamic "statement" {
+        for_each = var.s3_logs ? [1] : []
+        content {
+            sid = "LogsToS3"
+            effect = "Allow"
+            resources = [
+                "arn:aws:s3:::${var.s3_log_bucket}",
+                "arn:aws:s3:::${var.s3_log_key}/*"
+            ]
+            actions = [
+                "s3:PutObject",
+                "s3:GetBucketAcl",
+                "s3:GetBucketLocation"
+            ]
+        }
+    }
+    
+    dynamic "statement" {
         for_each = var.cross_account_assumable_roles != [] ? [1] : []
         content {
             effect = "Allow"
@@ -85,24 +107,6 @@ data "aws_iam_policy_document" "permission" {
                 "s3:ListBucket",
                 "s3:GetBucketLocation",
                 "s3:GetBucketAcl"
-            ]
-        }
-    }
-
-        
-    dynamic "statement" {
-        for_each = var.s3_log_key != null && var.s3_log_bucket != null ? [1] : []
-        content {
-            sid = "LogsToS3"
-            effect = "Allow"
-            resources = [
-                "arn:aws:s3:::${var.s3_log_bucket}",
-                "arn:aws:s3:::${var.s3_log_key}/*"
-            ]
-            actions = [
-                "s3:PutObject",
-                "s3:GetBucketAcl",
-                "s3:GetBucketLocation"
             ]
         }
     }

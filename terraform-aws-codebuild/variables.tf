@@ -149,6 +149,12 @@ variable "codepipeline_arn" {
     default = null
 }
 
+variable "s3_logs" {
+    description = "Determines if S3 logs should be enabled"
+    type = bool
+    default = false
+}
+
 variable "s3_log_key" {
     description = "Bucket path where the build project's logs will be stored (don't include bucket name)"
     type = string
@@ -165,6 +171,12 @@ variable "s3_log_encryption_disabled" {
     description = "Determines if encryption should be used for the build project's S3 logs"
     type = bool
     default = false
+}
+
+variable "cw_logs" {
+    description = "Determines if CloudWatch logs should be enabled"
+    type = bool
+    default = true
 }
 
 variable "cw_group_name" {
@@ -190,7 +202,7 @@ variable "environment_variables" {
     type = list(object({
         name = string
         value = string
-        type = string
+        type = optional(string)
     }))
     default = []
 }

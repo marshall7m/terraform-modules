@@ -23,7 +23,7 @@ resource "aws_codebuild_project" "this" {
     image_pull_credentials_type = var.build_image_pull_credentials_type
 
     dynamic "environment_variable" {
-        for_each = {for env_var in var.environment_variables: env_var.name => env_var}
+        for_each = {for env_var in local.environment_variables: env_var.name => env_var}
         content {
             name  = environment_variable.value.name
             value = environment_variable.value.value
@@ -33,13 +33,17 @@ resource "aws_codebuild_project" "this" {
   }
   
   logs_config {
-    cloudwatch_logs {
-      status = "ENABLED"
-      stream_name = var.cw_stream_name
-      group_name = var.cw_group_name
+    dynamic "cloudwatch_logs" {
+      for_each = var.cw_logs ? [1] : []
+      content {
+        status = "ENABLED"
+        stream_name = var.cw_stream_name
+        group_name = var.cw_group_name
+      }
     }
+    
     dynamic "s3_logs" {
-      for_each = []
+      for_each = var.s3_logs ? [1] : []
       content {
         status   = "ENABLED"
         location = var.s3_log_path
