@@ -1,18 +1,14 @@
-# Feature: Create stage & action preset/template blocks?
-
 locals {
     # Codepipeline action role ARNs
     action_role_arns = distinct(compact([for action in flatten(var.stages[*].actions): try(action.role_arn, "")]))
     # Cross-account AWS account_ids
     trusted_cross_account_ids = distinct([for id in data.aws_arn.action_roles[*].account: id if id != var.account_id])
-    # Cross-account AWS account ARNs used for S3 artifact bucket policy
-    trusted_cross_account_arns = formatlist("arn:aws:iam::%s:root", local.trusted_cross_account_ids)
     # Cross-account AWS role resources used for CodePipeline IAM permissions
     trusted_cross_account_roles = formatlist("arn:aws:iam::%s:role/*", local.trusted_cross_account_ids)
     # Distinct CodePipeline action providers used for CodePipeline IAM permissions
     action_providers = distinct(flatten(var.stages[*].actions[*].provider))
 
-    artifact_bucket_name = coalesce(var.artifact_bucket_name, var.pipeline_name)
+    artifact_bucket_name = var.artifact_bucket_name
 }
 
 data "aws_arn" "action_roles" {
@@ -21,11 +17,13 @@ data "aws_arn" "action_roles" {
 }
 
 resource "aws_codepipeline" "this" {
-  name     = var.pipeline_name
+  count = var.enabled ? 1 : 0
+
+  name     = var.name
   role_arn = coalesce(var.role_arn, aws_iam_role.this[0].arn)
 
   artifact_store {
-    location = local.artifact_bucket_name
+    location = var.artifact_bucket_name
     type     = "S3"
 
     dynamic "encryption_key" {
@@ -76,7 +74,7 @@ data "aws_iam_policy_document" "permissions" {
             "s3:Get*",
             "s3:Put*"
         ]
-        resources = ["arn:aws:s3:::${local.artifact_bucket_name}/*"]
+        resources = ["arn:aws:s3:::${var.artifact_bucket_name}/*"]
     }
 
     statement {
@@ -124,8 +122,6 @@ data "aws_iam_policy_document" "permissions" {
                 "codebuild:StartBuildBatch"
             ]
             resources = ["*"]
-            #TODO: Create finer resource permissions
-            # resources = formatlist("arn:aws:codebuild:${var.region}:${var.account_id}:project/%s", distinct(flatten([for action in var.stages[*].actions[*]: try(action.configuration["ProjectName"]])))
         }
     }
 
@@ -156,14 +152,15 @@ data "aws_iam_policy_document" "permissions" {
 }
 
 resource "aws_iam_policy" "permissions" {
-    count = var.role_arn == null ? 1 : 0
-    name = var.pipeline_name
-    description = "Allows codepipeline to assume defined service roles within the pipeline's actions and trigger AWS services defined within the pipeline's actions"
+    count = var.enabled && var.role_arn == null ? 1 : 0
+    name = var.name
+    description = "Allows CodePipeline to assume defined service roles within the pipeline's actions and trigger AWS services defined within the pipeline's actions"
     path = var.role_path
     policy = data.aws_iam_policy_document.permissions[0].json
 }
 
 resource "aws_iam_role_policy_attachment" "permissions" {
+  count = var.enabled ? 1 : 0
   role       = aws_iam_role.this[0].name
   policy_arn = aws_iam_policy.permissions[0].arn
 }
@@ -181,8 +178,8 @@ data "aws_iam_policy_document" "trust" {
 }
 
 resource "aws_iam_role" "this" {
-    count = var.role_arn == null ? 1 : 0
-    name = var.pipeline_name
+    count = var.enabled && var.role_arn == null ? 1 : 0
+    name = var.name
     path                 = var.role_path
     max_session_duration = var.role_max_session_duration
     description          = var.role_description

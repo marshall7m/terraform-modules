@@ -14,11 +14,7 @@ terraform {
 inputs = {
     pipeline_name = "test-pipeline"
     account_id = local.account_id
-    kms_key_admin_arns = ["arn:aws:iam::${local.account_id}:user/test-user"]
-    kms_alias = "test-pipeline"
-    create_artifact_bucket = false
     artifact_bucket_name = "private-demo-org-123-test"
-    encrypt_artifacts = false
     stages = [
         {
             name = "source-repos"
@@ -35,21 +31,6 @@ inputs = {
                         Owner      = "my-organization"
                         Repo       = "test"
                         Branch     = "master"
-                        OAuthToken = "test"
-                    }
-                },
-                {
-                    name             = "source-repo-2"
-                    category         = "Source"
-                    owner            = "ThirdParty"
-                    provider         = "GitHub"
-                    version          = "1"
-                    output_artifacts = ["source_output_two"]
-
-                    configuration = {
-                        Owner      = "my-organization"
-                        Repo       = "test"
-                        Branch     = "dev"
                         OAuthToken = "test"
                     }
                 }
@@ -76,8 +57,8 @@ inputs = {
                                 type = "PLAINTEXT"
                             },
                             {
-                                name = "COMMANDS"
-                                value = ["terragrunt init -backend=false", "terragrunt validate-all"]
+                                name = "COMMAND"
+                                value = "terragrunt validate-all"
                                 type = "PLAINTEXT"
                             }
                         ]))
