@@ -1,6 +1,6 @@
 variable "account_id" {
   description = "AWS account id used to create pipeline"
-  type = number
+  type = string
 }
 
 variable "common_tags" {

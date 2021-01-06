@@ -2,18 +2,13 @@ locals {
     # Codepipeline action role ARNs
     action_role_arns = distinct(compact([for action in flatten(var.stages[*].actions): try(action.role_arn, "")]))
     # Cross-account AWS account_ids
-    trusted_cross_account_ids = distinct([for id in data.aws_arn.action_roles[*].account: id if id != var.account_id])
+    trusted_cross_account_ids = distinct([for arn in local.action_role_arns: split(":", arn)[4] if split(":", arn)[4] != var.account_id])
     # Cross-account AWS role resources used for CodePipeline IAM permissions
     trusted_cross_account_roles = formatlist("arn:aws:iam::%s:role/*", local.trusted_cross_account_ids)
     # Distinct CodePipeline action providers used for CodePipeline IAM permissions
     action_providers = distinct(flatten(var.stages[*].actions[*].provider))
 
     artifact_bucket_name = var.artifact_bucket_name
-}
-
-data "aws_arn" "action_roles" {
-    count = length(local.action_role_arns)
-    arn = local.action_role_arns[count.index]
 }
 
 resource "aws_codepipeline" "this" {
