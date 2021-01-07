@@ -83,11 +83,11 @@ data "aws_iam_policy_document" "permission" {
     }
     
     dynamic "statement" {
-        for_each = var.cross_account_assumable_roles != [] ? [1] : []
+        for_each = var.assumable_role_arns != [] ? [1] : []
         content {
             effect = "Allow"
             actions = ["sts:AssumeRole"]
-            resources = var.cross_account_assumable_roles
+            resources = var.assumable_role_arns
         }
     }
 

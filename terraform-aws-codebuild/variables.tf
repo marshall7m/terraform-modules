@@ -18,8 +18,8 @@ variable "account_id" {
     default = null
 }
 
-variable "cross_account_assumable_roles" {
-    description = "Cross-account role ARNs that the CodeBuild project can assume"
+variable "assumable_role_arns" {
+    description = "AWS role ARNs the CodeBuild project is allowed to assume"
     type = list(string)
     default = []
 }

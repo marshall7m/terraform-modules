@@ -1,8 +1,8 @@
-output "build_arn" {
+output "arn" {
     value = aws_codebuild_project.this.arn
 }
 
-output "build_name" {
+output "name" {
     value = aws_codebuild_project.this.name
 }
 
