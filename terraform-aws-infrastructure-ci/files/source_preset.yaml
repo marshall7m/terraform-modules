@@ -1,0 +1,13 @@
+- name: 1-${stage_name}
+  actions: 
+    - name: source
+      category: Source
+      owner: AWS
+      version: 1
+      provider: CodeStarSourceConnection
+      output_artifacts:
+        - ${branch}
+      configuration:
+        ConnectionArn: ${connection_arn}
+        FullRepositoryId: ${repo_id}
+        BranchName: ${branch}

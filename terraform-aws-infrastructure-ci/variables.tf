@@ -1,3 +1,9 @@
+variable "enabled" {
+  description = "Determines if module should create resources or destroy pre-existing resources managed by this module"
+  type = bool
+  default = true
+}
+
 variable "account_id" {
   description = "AWS account id"
   type = number
@@ -17,6 +23,12 @@ variable "branch" {
   default = "master"
 }
 
+variable "repo_id" {
+  description = "Source repo ID with the following format: owner/repo"
+  type = string
+  default = null
+}
+
 variable "role_arn" {
   description = "Pre-existing IAM role ARN to use for the CodePipeline"
   type = string
@@ -32,7 +44,7 @@ variable "pipeline_name" {
 variable "create_artifact_bucket" {
   description = "Determines if a S3 bucket should be created for storing the pipeline's artifacts"
   type = bool
-  default = false
+  default = true
 }
 
 variable "artifact_bucket_name" {
@@ -54,7 +66,30 @@ variable "arifact_bucket_tags" {
 
 variable "stages" {
   description = "List of pipeline stages (see: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline)"
-  type = any
+  type = list(object({
+    name = string
+    order = number
+    common_env_vars = list(object({
+      name = string
+      value = string
+      type = optional(string)
+    }))
+    validate_env_vars = list(object({
+      name = string
+      value = string
+      type = optional(string)
+    }))
+    plan_env_vars = list(object({
+      name = string
+      value = string
+      type = optional(string)
+    }))
+    apply_env_vars = list(object({
+      name = string
+      value = string
+      type = optional(string)
+    }))
+  }))
 }
 
 variable "pipeline_tags" {
@@ -62,9 +97,6 @@ variable "pipeline_tags" {
   type = map(string)
   default = {}
 }
-
-
-#### CODEPIPELINE-IAM ####
 
 variable "role_path" {
   description = "Path to create policy"
@@ -99,7 +131,7 @@ variable "role_tags" {
   default = {}
 }
 
-#### CMK-IAM ####
+#### KMS-CMK ####
 
 variable "encrypt_artifacts" {
   description = "Determines if the Pipeline's artifacts will be encrypted via CMK"
@@ -110,7 +142,6 @@ variable "encrypt_artifacts" {
 variable "cmk_trusted_admin_arns" {
   description = "AWS ARNs of trusted entities that can perform administrative actions on the CMK"
   type = list(string)
-  default = []
 }
 
 variable "cmk_trusted_usage_arns" {
@@ -137,34 +168,7 @@ variable "cmk_alias" {
   default = null
 }
 
-variable "plan_role_name" {
-  type = string
-}
-
-variable "apply_role_name" {
-  type = string
-}
-
-variable "validate_command" {
-  type = string
-  default = "terragrunt validate-all"
-}
-
-variable "plan_command" {
-  type = string
-  default = "terragrunt plan-all"
-}
-
-variable "apply_command" {
-  type = string
-  default = "terragrunt apply-all"
-}
-
-variable "build_name" {
-  type = string
-  default = "infrastructure-ci-build"
-}
-
+#### CODESTAR ####
 variable "codestar_conn" {
   description = "AWS CodeStar connection configuration used to define the source stage of the pipeline"
   type = object({
@@ -175,4 +179,38 @@ variable "codestar_conn" {
     name = "github-conn"
     provider = "GitHub"
   }
+}
+
+#### CODEBUILD ####
+
+variable "build_name" {
+  description = "CodeBuild project name"
+  type = string
+}
+
+variable "build_assumable_role_arns" {
+  description = "AWS ARNs the CodeBuild role can assume"
+  type = list(string)
+  default = []
+}
+
+variable "build_env_vars" {
+  description = "Base environment variables that will be provided for each CodePipeline action build"
+  type = list(object({
+    name = string
+    value = string
+    type = optional(string)
+  }))
+}
+
+variable "buildspec" {
+  description = "CodeBuild buildspec path relative to the source repo root directory"
+  type = string
+  default = null
+}
+
+variable "build_tags" {
+  description = "Tags to attach to AWS CodeBuild project"
+  type = map(string)
+  default = {}
 }

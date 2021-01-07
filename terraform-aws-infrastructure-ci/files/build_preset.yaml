@@ -1,0 +1,53 @@
+name: ${order}-${stage_name}
+actions:
+  - name: validate
+    category: Test
+    owner: AWS
+    provider: CodeBuild
+    version: 1
+    input_artifacts: 
+      - ${branch}
+    output_artifacts:
+      - ${stage_name}-testing-output
+    configuration:
+      ProjectName: ${build_name}
+      EnvironmentVariables: >-
+        ${validate_env_vars}
+    run_order: 1
+
+  - name: plan
+    category: Test
+    owner: AWS
+    provider: CodeBuild
+    version: 1
+    input_artifacts: 
+      - ${branch}
+    output_artifacts:
+      - ${stage_name}-plan-output
+    configuration:
+      ProjectName: ${build_name}
+      EnvironmentVariables: >-
+        ${plan_env_vars}
+    run_order: 2
+
+  - name: manual-approval
+    category: Approval
+    owner: AWS
+    provider: Manual
+    version: 1
+    run_order: 3
+
+  - name: apply
+    category: Build
+    owner: AWS
+    provider: CodeBuild
+    version: 1
+    input_artifacts: 
+      - ${branch}
+    output_artifacts:
+      - ${stage_name}-apply-output
+    configuration:
+      ProjectName: ${build_name}
+      EnvironmentVariables: >-
+        ${apply_env_vars}
+    run_order: 4
