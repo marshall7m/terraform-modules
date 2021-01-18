@@ -5,29 +5,29 @@ resource "aws_codebuild_project" "this" {
   service_role  = var.role_arn != null ? var.role_arn : try(aws_iam_role.this[0].arn, null)
 
   artifacts {
-    type = try(var.artifacts.type, "NO_ARTIFACTS")
-    artifact_identifier = try(var.artifacts.artifact_identifier, null)
-    encryption_disabled = try(var.artifacts.encryption_disabled, null)
-    override_artifact_name = try(var.artifacts.override_artifact_name, null)
-    location = try(var.artifacts.location, null)
-    name = try(var.artifacts.name, null)
-    namespace_type = try(var.artifacts.namespace_type, null)
-    packaging = try(var.artifacts.packaging, null)
-    path = try(var.artifacts.path, null)
+    type = var.artifacts.type
+    artifact_identifier = var.artifacts.artifact_identifier
+    encryption_disabled = var.artifacts.encryption_disabled
+    override_artifact_name = var.artifacts.override_artifact_name
+    location = var.artifacts.location
+    name = var.artifacts.name
+    namespace_type = var.artifacts.namespace_type
+    packaging = var.artifacts.packaging
+    path = var.artifacts.path
   }
 
   environment {
-    compute_type                = var.build_compute_type
-    image                       = var.build_image
-    type                        = var.build_type
-    image_pull_credentials_type = var.build_image_pull_credentials_type
+    compute_type                = var.environment.compute_type
+    image                       = var.environment.image
+    type                        = var.environment.type
+    image_pull_credentials_type = var.environment.image_pull_credentials_type
 
     dynamic "environment_variable" {
-        for_each = {for env_var in local.environment_variables: env_var.name => env_var}
+        for_each = coalesce(var.environment.environment_variables, [])
         content {
-            name  = environment_variable.value.name
-            value = environment_variable.value.value
-            type = environment_variable.value.type
+            name  = environment_variable.name
+            value = environment_variable.value
+            type = environment_variable.type
         }
     }
   }
@@ -53,22 +53,22 @@ resource "aws_codebuild_project" "this" {
   }
 
   source {
-    type            = try(var.build_source.type, "NO_SOURCE")
-    location        = try(var.build_source.location, null)
-    git_clone_depth = try(var.build_source.git_clone_depth, null)
-    insecure_ssl = try(var.build_source.insecure_ssl, null)
-    report_build_status =try(var.build_source.report_build_status, null)
-    buildspec = try(var.build_source.buildspec, null)
+    type            = var.build_source.type
+    location        = var.build_source.location
+    git_clone_depth = var.build_source.git_clone_depth
+    insecure_ssl = var.build_source.insecure_ssl
+    report_build_status = var.build_source.report_build_status
+    buildspec = var.build_source.buildspec
     
     dynamic "auth" {
-      for_each = can(var.build_source.auth) ? [1] : []
+      for_each = coalesce(var.build_source.auth, {})
       content {
         type = var.build_source.auth.type
-        resource = try(var.build_source.auth.resource, null)
+        resource = var.build_source.auth.resource
       }
     }
     dynamic "git_submodules_config" {
-      for_each = can(var.build_source.git_submodules_config) ? [1] : []
+      for_each = coalesce(var.build_source.git_submodules_config, {})
       content {
         fetch_submodules = var.build_source.git_submodules_config.fetch_submodules
       }

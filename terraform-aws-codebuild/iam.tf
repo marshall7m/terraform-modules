@@ -1,7 +1,6 @@
 locals {
     account_id = coalesce(var.account_id, data.aws_caller_identity.current.id)
     region = coalesce(var.region, data.aws_region.current.name)
-    environment_variables = [for env_var in var.environment_variables: defaults(env_var, {type = "PLAINTEXT"})]
 }
 
 data "aws_caller_identity" "current" {}
