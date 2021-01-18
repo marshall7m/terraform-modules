@@ -24,6 +24,12 @@ inputs = {
       type = "LINUX_CONTAINER"
       image = "aws/codebuild/standard:4.0"
       compute_type = "BUILD_GENERAL1_SMALL"
+      environment_variables = [
+        {
+          name = "bar"
+          value = "foo"
+        }
+      ]
     }
     build_source = {
       type = "CODEPIPELINE"

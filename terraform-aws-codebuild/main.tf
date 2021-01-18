@@ -23,11 +23,11 @@ resource "aws_codebuild_project" "this" {
     image_pull_credentials_type = var.environment.image_pull_credentials_type
 
     dynamic "environment_variable" {
-        for_each = coalesce(var.environment.environment_variables, [])
+        for_each = var.environment.environment_variables != null ? {for env_var in var.environment.environment_variables: env_var.name => env_var} : {}
         content {
-            name  = environment_variable.name
-            value = environment_variable.value
-            type = environment_variable.type
+            name  = environment_variable.value.name
+            value = environment_variable.value.value
+            type = environment_variable.value.type
         }
     }
   }
