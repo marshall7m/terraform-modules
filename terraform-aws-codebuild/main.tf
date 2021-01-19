@@ -64,7 +64,7 @@ resource "aws_codebuild_project" "this" {
       for_each = coalesce(var.build_source.auth, {})
       content {
         type = var.build_source.auth.type
-        resource = var.build_source.auth.resource
+        resource = coalesce(aws_ssm_parameter.this[0].value, var.build_source.auth.resource)
       }
     }
     dynamic "git_submodules_config" {
@@ -98,4 +98,9 @@ resource "aws_codebuild_webhook" "this" {
       }
     }
   }
+}
+
+data "aws_ssm_parameter" "this" {
+  count = var.github_token_ssm_param_name != null ? 1 : 0
+  name = var.github_token_ssm_param_name
 }

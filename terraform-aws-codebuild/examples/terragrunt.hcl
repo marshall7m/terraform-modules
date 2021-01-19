@@ -15,7 +15,6 @@ locals {
 inputs = {
     region = "us-east-1"
     name = "tf-infrastructure"
-    cross_account_assumable_roles = ["arn:aws:iam::${local.account_id}:role/cross-account-tf-plan-access"]
     artifacts = {
         type = "NO_ARTIFACTS"
     }

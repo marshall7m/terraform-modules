@@ -82,7 +82,7 @@ data "aws_iam_policy_document" "permission" {
     }
     
     dynamic "statement" {
-        for_each = var.assumable_role_arns != [] ? [1] : []
+        for_each = var.assumable_role_arns
         content {
             effect = "Allow"
             actions = ["sts:AssumeRole"]

@@ -111,6 +111,11 @@ see for more info: https://registry.terraform.io/providers/hashicorp/aws/latest/
     })
 }
 
+variable "github_token_ssm_param_name" {
+    description = "AWS SSM Parameter Store key used to retrieve Github personal token for Github build sources"
+    type = string
+    default = null
+}
 variable "build_tags" {
     description = "Tags to attach to the CodeBuild project"
     type = map
