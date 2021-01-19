@@ -111,8 +111,8 @@ see for more info: https://registry.terraform.io/providers/hashicorp/aws/latest/
     })
 }
 
-variable "github_token_ssm_param_name" {
-    description = "AWS SSM Parameter Store key used to retrieve Github personal token for Github build sources"
+variable "source_auth_ssm_param_name" {
+    description = "AWS SSM Parameter Store key used to retrieve the sensitive build source authorization value (e.g. Github personal token for OAUTH authorization type)"
     type = string
     default = null
 }

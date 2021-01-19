@@ -30,9 +30,13 @@ inputs = {
         }
       ]
     }
+    source_auth_ssm_param_name = "github-token"
     build_source = {
       type = "CODEPIPELINE"
       buildspec = "arn:aws:s3:::private-demo-org/buildspec.yml"
+      auth = {
+        type = "OAUTH"
+      }
     }
     cache = {
       type  = "LOCAL"

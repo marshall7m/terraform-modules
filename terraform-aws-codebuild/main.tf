@@ -61,10 +61,10 @@ resource "aws_codebuild_project" "this" {
     buildspec = var.build_source.buildspec
     
     dynamic "auth" {
-      for_each = coalesce(var.build_source.auth, {})
+      for_each = var.build_source.auth != null ? [1] : []
       content {
         type = var.build_source.auth.type
-        resource = coalesce(aws_ssm_parameter.this[0].value, var.build_source.auth.resource)
+        resource = try(data.aws_ssm_parameter.this[0].value, var.build_source.auth.resource)
       }
     }
     dynamic "git_submodules_config" {
@@ -101,6 +101,6 @@ resource "aws_codebuild_webhook" "this" {
 }
 
 data "aws_ssm_parameter" "this" {
-  count = var.github_token_ssm_param_name != null ? 1 : 0
-  name = var.github_token_ssm_param_name
+  count = var.source_auth_ssm_param_name != null ? 1 : 0
+  name = var.source_auth_ssm_param_name
 }
