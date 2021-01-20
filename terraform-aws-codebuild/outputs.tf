@@ -9,3 +9,7 @@ output "name" {
 output "role_arn" {
     value = try(aws_iam_role.this[0].arn, null)
 }
+
+output "source_cred_arn" {
+    value = try(aws_codebuild_source_credential.this[0].arn, null)
+}

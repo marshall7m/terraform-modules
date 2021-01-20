@@ -61,10 +61,10 @@ resource "aws_codebuild_project" "this" {
     buildspec = var.build_source.buildspec
     
     dynamic "auth" {
-      for_each = var.build_source.auth != null ? [1] : []
+      for_each = var.source_token != null || var.source_auth_ssm_param_name != null ? [1] : []
       content {
-        type = var.build_source.auth.type
-        resource = try(data.aws_ssm_parameter.this[0].value, var.build_source.auth.resource)
+        type = try(var.build_source.auth.type, "OAUTH")
+        resource = try(var.build_source.auth.resource, null)
       }
     }
     dynamic "git_submodules_config" {
@@ -103,4 +103,12 @@ resource "aws_codebuild_webhook" "this" {
 data "aws_ssm_parameter" "this" {
   count = var.source_auth_ssm_param_name != null ? 1 : 0
   name = var.source_auth_ssm_param_name
+}
+
+resource "aws_codebuild_source_credential" "this" {
+  count = var.source_token != null || var.source_auth_ssm_param_name != null ? 1 : 0
+  auth_type   = var.build_source.type == "Bitbucket" ? "BASIC_AUTH" : "PERSONAL_ACCESS_TOKEN"
+  user_name   = var.source_user_name
+  server_type = var.build_source.type
+  token       = try(data.aws_ssm_parameter.this[0].value, var.source_token)
 }

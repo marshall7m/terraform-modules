@@ -13,8 +13,8 @@ locals {
 
 
 inputs = {
-    region = "us-east-1"
-    name = "tf-infrastructure"
+    region = "us-west-2"
+    name = "foo-build"
     artifacts = {
         type = "NO_ARTIFACTS"
     }
@@ -32,11 +32,9 @@ inputs = {
     }
     source_auth_ssm_param_name = "github-token"
     build_source = {
-      type = "CODEPIPELINE"
-      buildspec = "arn:aws:s3:::private-demo-org/buildspec.yml"
-      auth = {
-        type = "OAUTH"
-      }
+      type = "GITHUB"
+      location        = "https://github.com/marshall7m/terrace.git"
+      buildspec = "buildspec.yml"
     }
     cache = {
       type  = "LOCAL"

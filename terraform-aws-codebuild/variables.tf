@@ -116,6 +116,20 @@ variable "source_auth_ssm_param_name" {
     type = string
     default = null
 }
+
+variable "source_user_name" {
+    description = "Source Bitbucket user name (required only for Bitbucket)"
+    type = string
+    default = null
+}
+
+variable "source_token" {
+    description = "App password (Bitbucket source) or personal access token (Github/Github Enterprise)"
+    type = string
+    default = null
+    sensitive = true
+}
+
 variable "build_tags" {
     description = "Tags to attach to the CodeBuild project"
     type = map
