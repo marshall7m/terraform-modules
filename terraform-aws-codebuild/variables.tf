@@ -36,7 +36,7 @@ variable "role_max_session_duration" {
 }
 
 variable "role_description" {
-  default = "Allows CodeBuild service to assume cross-account service roles"
+  default = "Allows CodeBuild service to perform actions on your behalf"
 }
 
 variable "role_force_detach_policies" {
@@ -68,7 +68,7 @@ variable "name" {
 }
 
 variable "description" {
-    description = "Build description"
+    description = "CodeBuild project description"
     type = string
     default = null
 }
