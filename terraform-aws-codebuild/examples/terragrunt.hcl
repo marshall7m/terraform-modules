@@ -23,6 +23,7 @@ inputs = {
       type = "LINUX_CONTAINER"
       image = "aws/codebuild/standard:4.0"
       compute_type = "BUILD_GENERAL1_SMALL"
+      priviledged_mode = true
       environment_variables = [
         {
           name = "bar"
