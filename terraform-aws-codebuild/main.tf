@@ -21,7 +21,17 @@ resource "aws_codebuild_project" "this" {
     image                       = var.environment.image
     type                        = var.environment.type
     image_pull_credentials_type = var.environment.image_pull_credentials_type
-
+    privileged_mode = var.environment.privileged_mode
+    certificate = var.environment.certificate
+    
+    dynamic "registry_credential" {
+      for_each = var.environment.registry_credential != null ? [1] : []
+      content{
+        credential = var.environment.registry_credential.credential
+        credential_provider = var.environment.registry_credential.credential_provider
+      }
+    }
+    
     dynamic "environment_variable" {
         for_each = var.environment.environment_variables != null ? {for env_var in var.environment.environment_variables: env_var.name => env_var} : {}
         content {

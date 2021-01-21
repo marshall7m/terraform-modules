@@ -111,7 +111,7 @@ data "aws_iam_policy_document" "permission" {
     }
 
     dynamic "statement" {
-        for_each = coalesce(var.environment.priviledged_mode, false) ? [1] : []
+        for_each = coalesce(var.environment.privileged_mode, false) ? [1] : []
         content {
             sid = "EcrAccess"
             effect = "Allow"

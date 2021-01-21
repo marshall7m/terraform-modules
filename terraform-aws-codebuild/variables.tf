@@ -180,9 +180,9 @@ EOF
             value = optional(string)
             type = optional(string)
         })))
-        priviledged_mode = optional(bool)
+        privileged_mode = optional(bool)
         certificate = optional(string)
-        registry_credentials = optional(object({
+        registry_credential = optional(object({
             credential = string
             credential_provider = string
         }))
