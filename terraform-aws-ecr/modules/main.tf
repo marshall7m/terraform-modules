@@ -1,3 +1,8 @@
+provider "aws" {
+  region = "us-west-2"  
+  profile = "dev-admin"
+}
+
 resource "aws_ecr_repository" "this" {
   count                = var.create_repo ? 1 : 0
   name                 = var.name
