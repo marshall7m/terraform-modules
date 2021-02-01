@@ -2,7 +2,6 @@ repos:
   - repo: https://github.com/gruntwork-io/pre-commit
     rev: v0.1.12
     hooks:
-      - id: terraform-fmt
       - id: terraform-validate
       - id: tflint
       - id: shellcheck
@@ -13,3 +12,6 @@ repos:
     hooks:
       - id: terraform_tfsec
       - id: terraform_docs
+      - id: terraform_fmt
+      - id: terragrunt_fmt
+      - id: terragrunt_validate

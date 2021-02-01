@@ -39,3 +39,9 @@ variable "ssm_tags" {
   type        = map(any)
   default     = {}
 }
+
+variable "codebuild_access" {
+  description = "Determines if CodeBuild services are allowed to pull images from the ECR repo"
+  type        = bool
+  default     = false
+}

@@ -18,3 +18,28 @@ resource "aws_ssm_parameter" "this" {
   value = aws_ecr_repository.this[0].repository_url
   tags  = merge(var.ssm_tags, var.common_tags)
 }
+
+resource "aws_ecr_repository_policy" "this" {
+  count      = var.codebuild_access ? 1 : 0
+  repository = aws_ecr_repository.this[0].name
+
+  policy = data.aws_iam_policy_document.this[0].json
+}
+
+data "aws_iam_policy_document" "this" {
+  count = var.codebuild_access ? 1 : 0
+  statement {
+    sid    = "CodeBuildAccess"
+    effect = "Allow"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:GetDownloadUrlForLayer"
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["codebuild.amazonaws.com"]
+    }
+  }
+}
