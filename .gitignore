@@ -5,3 +5,5 @@ terraform.tfstate*
 .DS_Store
 *.cache*
 __pycache__
+.wget-hsts
+.bash_history

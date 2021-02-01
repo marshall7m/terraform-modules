@@ -1,8 +1,3 @@
-provider "aws" {
-  region = "us-west-2"  
-  profile = "dev-admin"
-}
-
 resource "aws_ecr_repository" "this" {
   count                = var.create_repo ? 1 : 0
   name                 = var.name
@@ -21,5 +16,5 @@ resource "aws_ssm_parameter" "this" {
   name  = coalesce(var.ssm_key, var.name)
   type  = "SecureString"
   value = aws_ecr_repository.this[0].repository_url
-  tags = merge(var.ssm_tags, var.common_tags)
+  tags  = merge(var.ssm_tags, var.common_tags)
 }
