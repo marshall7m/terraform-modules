@@ -3,24 +3,25 @@ include {
 }
 
 terraform {
-    source = "../"
+  source = "../"
 }
 
 locals {
   account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl"))
-  account_id = local.account_vars.locals.account_id
+  account_id   = local.account_vars.locals.account_id
 }
 
-inputs = {  
+inputs = {
+
   admin_role_cross_account_ids = [local.account_id]
   custom_admin_role_policy_ids = ["arn:aws:iam::aws:policy/AdministratorAccess"]
 
-  dev_role_cross_account_ids = [local.account_id]
+  dev_role_cross_account_ids   = [local.account_id]
   custom_admin_role_policy_ids = ["arn:aws:iam::aws:policy/PowerUserAccess"]
 
-  read_role_cross_account_ids = [local.account_id]
+  read_role_cross_account_ids  = [local.account_id]
   custom_admin_role_policy_ids = ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
-  
+
   tf_plan_role_cross_account_ids = [local.account_id]
   tf_plan_allowed_actions = [
     "tag:Get*",
@@ -38,7 +39,7 @@ inputs = {
   cd_role_cross_account_ids = [local.account_id]
   cd_statements = [
     {
-      effect = "Allow"
+      effect    = "Allow"
       resources = ["*"]
       actions = [
         "codedeploy:CreateDeployment",
@@ -49,14 +50,14 @@ inputs = {
       ]
     },
     {
-       effect = "Allow"
-       resources = ["*"]
-       actions = [
-         "s3:GetObject*",
-         "s3:PutObject",
-         "s3:PutObjectAcl"    
-       ]
-     }
+      effect    = "Allow"
+      resources = ["*"]
+      actions = [
+        "s3:GetObject*",
+        "s3:PutObject",
+        "s3:PutObjectAcl"
+      ]
+    }
   ]
 }
  
