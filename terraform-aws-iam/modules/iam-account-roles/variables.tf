@@ -79,19 +79,7 @@ variable "admin_role_conditions" {
 
 variable "admin_statements" {
   description = "IAM policy statements used to define the permission for the role"
-  /* 
- change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
-  type = list(object({
-    effect = string
-    resources = list(string)
-    actions = list(string)
-    condition = list(map(object({
-      test = string
-      variable = string
-      values = list(string)
-    })))
-  }))
-*/
+  # TODO: change variable type when: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional object attributes
   type    = any
   default = []
 }
@@ -201,19 +189,7 @@ variable "dev_role_conditions" {
 
 variable "dev_statements" {
   description = "IAM policy statements used to define the permission for the role"
-  /* 
- change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
-  type = list(object({
-    effect = string
-    resources = list(string)
-    actions = list(string)
-    condition = list(map(object({
-      test = string
-      variable = string
-      values = list(string)
-    })))
-  }))
-*/
+  # TODO: change variable type when: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional object attributes
   type    = any
   default = []
 }
@@ -323,19 +299,7 @@ variable "read_role_conditions" {
 
 variable "read_statements" {
   description = "IAM policy statements used to define the permission for the role"
-  /* 
- change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
-  type = list(object({
-    effect = string
-    resources = list(string)
-    actions = list(string)
-    condition = list(map(object({
-      test = string
-      variable = string
-      values = list(string)
-    })))
-  }))
-*/
+  # TODO: change variable type when: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional object attributes
   type    = any
   default = []
 }
@@ -433,19 +397,7 @@ variable "limited_s3_read_role_conditions" {
 
 variable "limited_s3_read_statements" {
   description = "IAM policy statements used to define the permission for the role"
-  /* 
- change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
-  type = list(object({
-    effect = string
-    resources = list(string)
-    actions = list(string)
-    condition = list(map(object({
-      test = string
-      variable = string
-      values = list(string)
-    })))
-  }))
-*/
+  # TODO: change variable type when: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional object attributes
   type    = any
   default = []
 }
@@ -555,19 +507,7 @@ variable "tf_plan_role_conditions" {
 
 variable "tf_plan_statements" {
   description = "IAM policy statements used to define the permission for the role"
-  /* 
- change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
-  type = list(object({
-    effect = string
-    resources = list(string)
-    actions = list(string)
-    condition = list(map(object({
-      test = string
-      variable = string
-      values = list(string)
-    })))
-  }))
-*/
+  # TODO: change variable type when: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional object attributes
   type    = any
   default = []
 }
@@ -665,19 +605,7 @@ variable "tf_apply_role_conditions" {
 
 variable "tf_apply_statements" {
   description = "IAM policy statements used to define the permission for the role"
-  /* 
- change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
-  type = list(object({
-    effect = string
-    resources = list(string)
-    actions = list(string)
-    condition = list(map(object({
-      test = string
-      variable = string
-      values = list(string)
-    })))
-  }))
-*/
+  # TODO: change variable type when: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional object attributes
   type    = any
   default = []
 }
@@ -775,19 +703,7 @@ variable "cd_role_conditions" {
 
 variable "cd_statements" {
   description = "IAM policy statements used to define the permission for the role"
-  /* 
- change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
-  type = list(object({
-    effect = string
-    resources = list(string)
-    actions = list(string)
-    condition = list(map(object({
-      test = string
-      variable = string
-      values = list(string)
-    })))
-  }))
-*/
+  # TODO: change variable type when: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional object attributes
   type    = any
   default = []
 }

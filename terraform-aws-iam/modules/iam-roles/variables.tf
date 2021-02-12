@@ -1,30 +1,30 @@
-#### IAM-ROLE ####
-
 variable "create_role" {
-    description = "Determines if the role should be created/updated or destroyed"
-    type = bool
-    default = true
+  description = "Determines if role should be created"
+  type        = bool
+  default     = true
 }
+
 variable "role_name" {
   description = "Role name"
-  type = string
+  type        = string
 }
 
 variable "role_path" {
   description = "Path to create policy"
+  type        = string
   default     = "/"
 }
 
 variable "role_max_session_duration" {
   description = "Max session duration (seconds) the role can be assumed for"
-  default     = 3600
   type        = number
+  default     = 3600
 }
 
 variable "role_description" {
-  description = "IAM role description"
-  type = string
-  default = ""
+  description = "Description for role"
+  type        = string
+  default     = ""
 }
 
 variable "role_force_detach_policies" {
@@ -57,6 +57,24 @@ variable "role_tags" {
   default     = {}
 }
 
+variable "common_tags" {
+  description = "Tags to attach to the role (used for implicit terragrunt variable inheritance)"
+  type        = map(string)
+  default     = {}
+}
+
+variable "trusted_entities" {
+  description = "AWS users/roles that are allowed to assume this role"
+  type        = list(string)
+  default     = []
+}
+
+variable "trusted_services" {
+  description = "AWS services that are allowed to assume this role"
+  type        = list(string)
+  default     = []
+}
+
 variable "allowed_resources" {
   description = "List of resources the role will be allowed to perform on"
   type        = list(string)
@@ -80,28 +98,24 @@ variable "role_conditions" {
 }
 
 variable "statements" {
-  description = "IAM policy statements used to define the permission for the role"
-  /* 
- change to below when issue: https://github.com/hashicorp/terraform/issues/19898 is fixed to allow optional condition map
+  description = "IAM policy statements for role permissions"
   type = list(object({
-    effect = string
+    effect    = string
     resources = list(string)
-    actions = list(string)
-    condition = list(map(object({
-      test = string
+    actions   = list(string)
+    conditions = optional(list(map(object({
+      test     = string
       variable = string
-      values = list(string)
-    })))
+      values   = list(string)
+    }))))
   }))
-*/
-  type    = any
   default = []
 }
 
 variable "policy_name" {
   description = "Name of the IAM policy used for defining the role permissions"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "policy_description" {
@@ -112,6 +126,7 @@ variable "policy_description" {
 
 variable "policy_path" {
   description = "Path of the IAM policy used for defining the role permissions"
+  type        = string
   default     = "/"
 }
 
@@ -119,16 +134,4 @@ variable "custom_role_policy_arns" {
   description = "List of IAM policy ARNs to attach to the role"
   type        = list(string)
   default     = []
-}
-
-variable "trusted_users" {
-    description = "List of AWS IAM user ARNs that can assume the role"
-    type = list(string)
-    default = []
-}
-
-variable "trusted_services" {
-    description = "List of AWS services that can assume the role (e.g. glue.amazonaws.com)"
-    type = list(string)
-    default = []
 }
